@@ -18,3 +18,6 @@ npm-debug.log*
 
 # local tool settings
 .claude/settings.local.json
+
+# personal notes (local only — not part of the published portfolio)
+배포방법.txt
