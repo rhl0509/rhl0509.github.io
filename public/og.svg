@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#FFFFFF"/>
+  <rect x="1" y="1" width="1198" height="628" fill="none" stroke="rgba(0,0,0,0.08)"/>
+  <!-- logo -->
+  <rect x="80" y="80" width="64" height="64" rx="16" fill="#9CA3AF"/>
+  <text x="112" y="122" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="26" font-weight="800" letter-spacing="-1" fill="#0A0B0D">HR</text>
+  <text x="164" y="123" font-family="'Pretendard', system-ui, sans-serif" font-size="26" font-weight="600" fill="#0A0B0D">Hyeongrae Rho</text>
+  <!-- eyebrow -->
+  <text x="80" y="300" font-family="'JetBrains Mono', monospace" font-size="24" letter-spacing="4" fill="#6B7280">FULL-STACK &amp; AI</text>
+  <!-- headline -->
+  <text x="78" y="392" font-family="'Pretendard', system-ui, sans-serif" font-size="84" font-weight="700" letter-spacing="-2" fill="#0A0B0D">인프라부터 AI까지,</text>
+  <text x="78" y="492" font-family="'Pretendard', system-ui, sans-serif" font-size="84" font-weight="700" letter-spacing="-2" fill="#0A0B0D">혼자서 <tspan fill="#5B7B0A">끝까지</tspan>.</text>
+  <!-- footer -->
+  <circle cx="90" cy="560" r="6" fill="#84CC16"/>
+  <text x="106" y="567" font-family="'Pretendard', system-ui, sans-serif" font-size="22" fill="#4B5563">2026 작업 의뢰 가능 · rhl9509@naver.com</text>
+</svg>

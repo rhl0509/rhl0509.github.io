@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio - Hyeongrae Rho</title>
+
+    <!-- set theme before paint to avoid flash of wrong theme -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("theme");
+          if (t !== "dark" && t !== "light") {
+            t = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+          }
+          document.documentElement.setAttribute("data-theme", t);
+        } catch (e) {}
+      })();
+    </script>
+
+    <!-- SEO -->
+    <meta name="description" content="Hyeongrae Rho — Full-stack & AI 개발자. 인프라부터 프론트, 서버, 모델 연동까지 전체 흐름을 직접 설계하고 구현합니다." />
+    <meta name="author" content="Hyeongrae Rho" />
+    <meta name="theme-color" content="#ECEFF3" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#08090B" media="(prefers-color-scheme: dark)" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Open Graph (Kakao, Facebook, Slack 등) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ko_KR" />
+    <meta property="og:site_name" content="Hyeongrae Rho" />
+    <meta property="og:title" content="Portfolio - Hyeongrae Rho" />
+    <meta property="og:description" content="Full-stack & AI 개발자. 인프라부터 AI까지, 혼자서 끝까지." />
+    <meta property="og:url" content="https://rhl0509.github.io/" />
+    <!-- NOTE: og.png (1200x630) must be created and deployed — SVG is not supported by OG crawlers -->
+    <meta property="og:image" content="https://rhl0509.github.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Portfolio - Hyeongrae Rho" />
+    <meta name="twitter:description" content="Full-stack & AI 개발자. 인프라부터 AI까지, 혼자서 끝까지." />
+    <meta name="twitter:image" content="https://rhl0509.github.io/og.png" />
+
+    <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fastly.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fastly.jsdelivr.net/npm/@fontsource/jetbrains-mono@5.0.18/index.min.css"
+    />
+    <style>
+      * { box-sizing: border-box; }
+      html, body {
+        height: 100%;
+        /* auto: scrollbars only appear when the card doesn't fit the viewport */
+        overflow: auto;
+      }
+      body {
+        margin: 0;
+        display: flex;
+        padding: 40px;
+        background: #ECEFF3;
+        transition: background-color 0.25s ease;
+      }
+      /* auto margins center the card when it fits and never clip it when it
+         overflows (unlike align-items/justify-content: center, which cut off
+         the top/left with no way to scroll to it) */
+      #root { margin: auto; }
+      html[data-theme="dark"] body { background: #08090B; }
+      @media (max-width: 1024px) {
+        body { padding: 24px; }
+      }
+      /* small screens: keep the card top-aligned */
+      @media (max-width: 720px) {
+        body { padding: 16px; }
+        #root { margin-top: 0; }
+      }
+      @media (max-width: 400px) {
+        body { padding: 10px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/main.tsx"></script>
+  </body>
+</html>
