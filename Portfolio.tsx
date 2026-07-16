@@ -321,13 +321,12 @@ function initialsOf(name: string) {
     .toUpperCase();
 }
 
+/** Light by default. Only a past explicit toggle (persisted, and replayed by the
+    inline script in index.html before paint) switches it to dark. */
 function getInitialTheme(): "light" | "dark" {
   if (typeof document !== "undefined") {
     const t = document.documentElement.getAttribute("data-theme");
     if (t === "dark" || t === "light") return t;
-  }
-  if (typeof window !== "undefined" && window.matchMedia) {
-    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   }
   return "light";
 }
@@ -354,14 +353,20 @@ export default function Portfolio({
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
-    try {
-      localStorage.setItem("theme", theme);
-    } catch {
-      /* ignore (private mode / storage disabled) */
-    }
   }, [theme]);
 
-  const toggleTheme = () => setTheme((t) => (t === "dark" ? "light" : "dark"));
+  // persist only on an explicit toggle — auto-persisting on mount would freeze
+  // the default into every visitor's storage on their first visit.
+  const toggleTheme = () =>
+    setTheme((t) => {
+      const next = t === "dark" ? "light" : "dark";
+      try {
+        localStorage.setItem("theme", next);
+      } catch {
+        /* ignore (private mode / storage disabled) */
+      }
+      return next;
+    });
 
   const monoLabel: CSSProperties = { fontFamily: MONO, fontSize: 11, letterSpacing: "0.06em", textTransform: "uppercase", color: V.fg3 };
 

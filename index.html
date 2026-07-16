@@ -5,16 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Portfolio - Hyeongrae Rho</title>
 
-    <!-- set theme before paint to avoid flash of wrong theme -->
+    <!-- set theme before paint to avoid flash of wrong theme.
+         default is light; only an explicit past choice switches it. -->
     <script>
       (function () {
+        var t = "light";
         try {
-          var t = localStorage.getItem("theme");
-          if (t !== "dark" && t !== "light") {
-            t = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-          }
-          document.documentElement.setAttribute("data-theme", t);
+          var s = localStorage.getItem("theme");
+          if (s === "dark" || s === "light") t = s;
         } catch (e) {}
+        document.documentElement.setAttribute("data-theme", t);
       })();
     </script>
 
