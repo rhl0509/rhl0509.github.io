@@ -5,24 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Portfolio - Hyeongrae Rho</title>
 
+    <!-- content is kept in step by the boot script below. The meta must come
+         BEFORE the script: it runs at parse time, so anything it looks up has
+         to exist already — placed after, getElementById returns null and the
+         browser chrome stays light for dark-OS visitors until React mounts. -->
+    <meta id="theme-color" name="theme-color" content="#ECEFF3" />
+
     <!-- set theme before paint to avoid flash of wrong theme.
-         default is light; only an explicit past choice switches it. -->
+         an explicit past choice wins; otherwise follow the OS. -->
     <script>
       (function () {
-        var t = "light";
+        var t = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
         try {
           var s = localStorage.getItem("theme");
           if (s === "dark" || s === "light") t = s;
         } catch (e) {}
         document.documentElement.setAttribute("data-theme", t);
+        // theme-color must track the theme we actually rendered, not the OS —
+        // a stored choice can disagree with prefers-color-scheme, which would
+        // leave the browser chrome dark while the page is light.
+        var m = document.getElementById("theme-color");
+        if (m) m.setAttribute("content", t === "dark" ? "#08090B" : "#ECEFF3");
       })();
     </script>
 
     <!-- SEO -->
-    <meta name="description" content="Hyeongrae Rho — Full-stack & AI 개발자. 인프라부터 프론트, 서버, 모델 연동까지 전체 흐름을 직접 설계하고 구현합니다." />
+    <!-- these three descriptions (meta / og / twitter) are one sentence in three
+         places — they must be edited together, and they must match the site's
+         intro copy in Portfolio.tsx. -->
+    <meta name="description" content="AI Engineering &amp; Full-stack 개발자 Hyeongrae Rho. AI가 매일의 업무 위에서 실제로 도는 상태(AX)를 인프라부터 서버, 프론트까지 풀스택으로 만듭니다." />
     <meta name="author" content="Hyeongrae Rho" />
-    <meta name="theme-color" content="#ECEFF3" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#08090B" media="(prefers-color-scheme: dark)" />
+    <link rel="canonical" href="https://rhl0509.github.io/" />
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -32,9 +45,9 @@
     <meta property="og:locale" content="ko_KR" />
     <meta property="og:site_name" content="Hyeongrae Rho" />
     <meta property="og:title" content="Portfolio - Hyeongrae Rho" />
-    <meta property="og:description" content="Full-stack & AI 개발자. 인프라부터 AI까지, 혼자서 끝까지." />
+    <meta property="og:description" content="AI Engineering &amp; Full-stack 개발자 Hyeongrae Rho. AI가 매일의 업무 위에서 실제로 도는 상태(AX)를 인프라부터 서버, 프론트까지 풀스택으로 만듭니다." />
     <meta property="og:url" content="https://rhl0509.github.io/" />
-    <!-- NOTE: og.png (1200x630) must be created and deployed — SVG is not supported by OG crawlers -->
+    <!-- og.png is rendered from public/og.svg — crawlers do not read SVG -->
     <meta property="og:image" content="https://rhl0509.github.io/og.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -42,8 +55,12 @@
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Portfolio - Hyeongrae Rho" />
-    <meta name="twitter:description" content="Full-stack & AI 개발자. 인프라부터 AI까지, 혼자서 끝까지." />
+    <meta name="twitter:description" content="AI Engineering &amp; Full-stack 개발자 Hyeongrae Rho. AI가 매일의 업무 위에서 실제로 도는 상태(AX)를 인프라부터 서버, 프론트까지 풀스택으로 만듭니다." />
     <meta name="twitter:image" content="https://rhl0509.github.io/og.png" />
+
+    <!-- the hero portrait is the LCP candidate; without a hint it is only
+         discovered after React renders, one full network round-trip late -->
+    <link rel="preload" href="/profile.webp" as="image" type="image/webp" />
 
     <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin />
     <link
@@ -56,6 +73,10 @@
     />
     <style>
       * { box-sizing: border-box; }
+      /* UA-drawn parts (scrollbars, form controls) follow the active theme —
+         without this a dark page scrolls with a glaring light scrollbar */
+      html { color-scheme: light; }
+      html[data-theme="dark"] { color-scheme: dark; }
       html, body {
         height: 100%;
         /* auto: scrollbars only appear when the card doesn't fit the viewport */
@@ -68,10 +89,15 @@
         background: #ECEFF3;
         transition: background-color 0.25s ease;
       }
-      /* auto margins center the card when it fits and never clip it when it
-         overflows (unlike align-items/justify-content: center, which cut off
-         the top/left with no way to scroll to it) */
-      #root { margin: auto; }
+      /* auto margins center the card vertically when it fits and never clip it
+         when it overflows (unlike align-items: center, which cuts off the top
+         with no way to scroll to it).
+         width: 100% is load-bearing — as a bare flex item #root is sized by
+         its contents, so its width stays indefinite, and the card's
+         `width: min(1280px, 100%)` then has no percentage basis to resolve
+         against: it silently degrades to shrink-to-fit, narrower than the
+         space it was told to fill. */
+      #root { margin: auto; width: 100%; }
       html[data-theme="dark"] body { background: #08090B; }
       @media (max-width: 1024px) {
         body { padding: 24px; }
@@ -84,9 +110,24 @@
       @media (max-width: 400px) {
         body { padding: 10px; }
       }
+      @media (prefers-reduced-motion: reduce) {
+        /* the card already snaps under reduced motion (Portfolio.tsx);
+           the frame must not keep fading on its own */
+        body { transition: none; }
+      }
+      /* without JS the boot script never runs, so data-theme is never set and
+         the frame stays light — one colour is enough here */
+      noscript { margin: auto; text-align: center; font: 15px/1.7 'Pretendard Variable', Pretendard, system-ui, sans-serif; color: #4B5563; }
+      noscript a { color: inherit; }
     </style>
   </head>
   <body>
+    <noscript>
+      <p><strong>Hyeongrae Rho</strong> — AI Engineering &amp; Full-stack 개발자</p>
+      <!-- this address is duplicated from Portfolio.tsx's `email` default and
+           cannot read it (no JS here, by definition) — change both together. -->
+      <p>이 페이지는 JavaScript로 렌더링됩니다. 연락처: <a href="mailto:rhl9509@naver.com">rhl9509@naver.com</a></p>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/main.tsx"></script>
   </body>

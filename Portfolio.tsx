@@ -9,7 +9,13 @@ import React, { CSSProperties, ReactNode, useEffect, useState } from "react";
 
 const MONO = "'JetBrains Mono', ui-monospace, monospace";
 
-/** Theme-aware tokens. Fixed values (accents, signal) stay literal. */
+/** Browser-chrome colours for <meta name="theme-color">.
+    Must stay in step with the boot script in index.html, which paints the same
+    values before React loads — this constant is the component-side copy. */
+const THEME_COLOR = { light: "#ECEFF3", dark: "#08090B" } as const;
+
+/** Theme-aware tokens. Every colour the component uses must live here — reaching
+    past V for a raw var() is what lets the two themes drift apart. */
 const V = {
   ink: "var(--ink)",
   fg2: "var(--fg2)",
@@ -22,38 +28,35 @@ const V = {
   hlInk: "var(--hl-ink)",
   logoBg: "var(--logo-bg)",
   logoInk: "var(--logo-ink)",
-  signal: "#84CC16",
+  cardBorder: "var(--card-border)",
+  cardShadow: "var(--card-shadow)",
+  /* status dot. Themed: one lime cannot clear 3:1 on both white and near-black. */
+  signal: "var(--signal)",
 } as const;
 
 export interface Project {
   no: string;
   name: string;
   desc: string;
-  discipline: string;
+  /** what you did on it — not a design discipline */
+  role: string;
   year: string;
-  accent: string;
-  /** sparkline points in a 100×28 viewBox */
-  spark: string;
-  /** optional case-study link */
+  /** headline technologies, 2–3 max before the column wraps */
+  stack: string[];
+  /** optional case-study or repo link */
   href?: string;
 }
 
+/* PLACEHOLDER — none of these are real projects. They came with the template
+   and exist only to keep the layout honest until the real list lands. */
 export const PROJECTS: Project[] = [
-  { no: "06", name: "GAGYE", desc: "가계부와 주식을 하나로", discipline: "Product lead", year: "2026", accent: "#4B5563", spark: "0,22 12,20 24,23 36,16 48,18 60,11 72,13 84,7 100,5" },
-  { no: "05", name: "Meridian Terminal", desc: "기관용 트레이딩 워크스페이스", discipline: "Lead designer", year: "2026", accent: "#0891B2", spark: "0,12 12,9 24,14 36,8 48,15 60,7 72,16 84,10 100,6" },
-  { no: "04", name: "Onboarding", desc: "핀테크 가입 흐름 재설계", discipline: "Interaction", year: "2026", accent: "#7C3AED", spark: "0,20 12,18 24,19 36,14 48,15 60,12 72,9 84,10 100,7" },
-  { no: "03", name: "Numeral", desc: "숫자 중심 타입 시스템", discipline: "Design systems", year: "2026", accent: "#D97706", spark: "0,16 12,14 24,16 36,13 48,15 60,12 72,14 84,11 100,12" },
-  { no: "02", name: "Compass", desc: "자산 리밸런싱 가이드", discipline: "Product design", year: "2026", accent: "#DB2777", spark: "0,18 12,16 24,17 36,13 48,14 60,12 72,13 84,9 100,8" },
-  { no: "01", name: "Pulse", desc: "실시간 시세 위젯", discipline: "Motion", year: "2026", accent: "#0D9488", spark: "0,14 12,17 24,11 36,18 48,10 60,16 72,9 84,15 100,8" },
+  { no: "06", name: "GAGYE", desc: "가계부와 주식을 하나로", role: "Full-stack", year: "2026", stack: ["React", "FastAPI"] },
+  { no: "05", name: "Meridian Terminal", desc: "기관용 트레이딩 워크스페이스", role: "Full-stack", year: "2026", stack: ["Next.js", "MySQL"] },
+  { no: "04", name: "Onboarding", desc: "핀테크 가입 흐름 재설계", role: "Frontend", year: "2026", stack: ["React", "TypeScript"] },
+  { no: "03", name: "Numeral", desc: "숫자 중심 타입 시스템", role: "Frontend", year: "2026", stack: ["TypeScript"] },
+  { no: "02", name: "Compass", desc: "자산 리밸런싱 가이드", role: "Backend", year: "2026", stack: ["Python", "FastAPI"] },
+  { no: "01", name: "Pulse", desc: "실시간 시세 위젯", role: "Backend", year: "2026", stack: ["Python", "Redis"] },
 ];
-
-function Sparkline({ points, color }: { points: string; color: string }) {
-  return (
-    <svg width={96} height={28} viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-      <polyline points={points} fill="none" stroke={color} strokeWidth={1.5} strokeLinejoin="round" strokeLinecap="round" />
-    </svg>
-  );
-}
 
 function Chevron() {
   return (
@@ -102,14 +105,18 @@ function SunIcon() {
   );
 }
 
+/** title repeats the accessible name on purpose: if the tooltip said "라이트 모드"
+    (a state) while the label said "라이트 모드로 전환" (an action), voice control
+    would match the tooltip and fail to find the button. */
 function ThemeToggle({ theme, onToggle }: { theme: "light" | "dark"; onToggle: () => void }) {
+  const label = theme === "dark" ? "라이트 모드로 전환" : "다크 모드로 전환";
   return (
     <button
       type="button"
       className="pf-iconbtn"
       onClick={onToggle}
-      aria-label={theme === "dark" ? "라이트 모드로 전환" : "다크 모드로 전환"}
-      title={theme === "dark" ? "라이트 모드" : "다크 모드"}
+      aria-label={label}
+      title={label}
     >
       {theme === "dark" ? <SunIcon /> : <MoonIcon />}
     </button>
@@ -117,19 +124,23 @@ function ThemeToggle({ theme, onToggle }: { theme: "light" | "dark"; onToggle: (
 }
 
 function SocialButton({ href, icon, label }: { href: string; icon: ReactNode; label: string }) {
+  // no aria-label: the visible <span> already names the link, and an aria-label
+  // holding the same string would only override it with itself.
   return (
-    <a className="pf-social" href={href} target="_blank" rel="noopener noreferrer" aria-label={label}>
+    <a className="pf-social" href={href} target="_blank" rel="noopener noreferrer">
       {icon}
       <span>{label}</span>
+      <span className="pf-sr">(새 창)</span>
     </a>
   );
 }
 
 const STYLE = `
 .pf-card {
+  /* contrast ratios below are against --surface / --panel in this theme */
   --ink: #0A0B0D;
-  --fg2: #4B5563;
-  --fg3: #6B7280;
+  --fg2: #4B5563;        /* 7.6 / 7.0 */
+  --fg3: #5B6472;        /* 6.0 / 5.6 — was #6B7280 (4.83 / 4.50: no headroom) */
   --line: rgba(0,0,0,0.06);
   --lineStrong: rgba(0,0,0,0.16);
   --panel: #F5F7FA;
@@ -138,144 +149,220 @@ const STYLE = `
   --hl-ink: #0A0B0D;
   --logo-bg: #9CA3AF;
   --logo-ink: #0A0B0D;
+  --signal: #65A30D;     /* 3.1 on white — #84CC16 is 1.98 here and washes out */
   --card-border: rgba(0,0,0,0.10);
-  --card-shadow: 0 24px 70px rgba(0,0,0,0.10);
+  --card-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 24px 70px rgba(0,0,0,0.10);
   --scroll-thumb: rgba(0,0,0,0.16);
   --scroll-thumb-hover: rgba(0,0,0,0.28);
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;     /* card — nothing nested may exceed this */
+
+  --dur-theme: 250ms;
+  --dur-fast: 120ms;
+  --ease-out: cubic-bezier(.2,.7,.2,1);
+
   width: min(1280px, 100%);
+  margin-inline: auto;   /* #root is full-width now, so the card centres itself */
 }
-.pf-card[data-theme="dark"], [data-theme="dark"] .pf-card {
-  --ink: #F3F4F6;
-  --fg2: #9CA3AF;
-  --fg3: #6B7280;
-  --line: rgba(255,255,255,0.08);
-  --lineStrong: rgba(255,255,255,0.18);
-  --panel: #16181D;
-  --surface: #0E0F12;
-  --hl-bg: #3F4651;
-  --hl-ink: #F3F4F6;
-  --logo-bg: #9CA3AF;
-  --logo-ink: #0A0B0D;
-  --card-border: rgba(255,255,255,0.10);
-  --card-shadow: 0 24px 70px rgba(0,0,0,0.55);
-  --scroll-thumb: rgba(255,255,255,0.18);
-  --scroll-thumb-hover: rgba(255,255,255,0.32);
+/* Dark tokens are screen-only. Print skips backgrounds by default, so a dark
+   theme on paper becomes near-white text on nothing — in print this whole
+   block simply never applies and the light tokens above take over. */
+@media screen {
+  .pf-card[data-theme="dark"], [data-theme="dark"] .pf-card {
+    --ink: #F3F4F6;
+    --fg2: #9CA3AF;        /* 7.5 / 7.0 */
+    --fg3: #7F8795;        /* 5.3 / 4.9 — was #6B7280, i.e. the light value verbatim
+                              (3.96 / 3.67: below AA. A missing override is valid CSS,
+                              so nothing but a contrast check catches it.) */
+    --line: rgba(255,255,255,0.08);
+    --lineStrong: rgba(255,255,255,0.18);
+    --panel: #16181D;
+    --surface: #0E0F12;
+    --hl-bg: #3F4651;
+    --hl-ink: #F3F4F6;
+    --logo-bg: #9CA3AF;
+    --logo-ink: #0A0B0D;
+    --signal: #84CC16;     /* 9.7 on near-black */
+    --card-border: rgba(255,255,255,0.10);
+    --card-shadow: 0 1px 2px rgba(0,0,0,0.40), 0 24px 70px rgba(0,0,0,0.55);
+    --scroll-thumb: rgba(255,255,255,0.18);
+    --scroll-thumb-hover: rgba(255,255,255,0.32);
+  }
 }
 
-/* smooth tween when toggling theme */
-.pf-card, .pf-card *:not(.pf-chev) {
-  transition: background-color .25s ease, border-color .25s ease, color .25s ease, fill .25s ease, stroke .25s ease, box-shadow .25s ease;
+/* Theme swap tween. The duration is a custom property, not a literal: custom
+   properties inherit but don't compete on specificity, so an element can dial
+   it down without out-specifying this (0,2,0) selector. */
+.pf-card, .pf-card * {
+  transition:
+    background-color var(--dur-theme) var(--ease-out),
+    border-color     var(--dur-theme) var(--ease-out),
+    color            var(--dur-theme) var(--ease-out),
+    fill             var(--dur-theme) var(--ease-out),
+    stroke           var(--dur-theme) var(--ease-out),
+    box-shadow       var(--dur-theme) var(--ease-out);
 }
+/* hover feedback wants ~120ms; 250ms reads as lag */
+.pf-row, .pf-iconbtn, .pf-social, .pf-link { --dur-theme: var(--dur-fast); }
 
 .pf-pad { padding: 40px 56px 44px; }
+
+/* visually hidden, still announced */
+.pf-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* Internal scroll keeps the card a single screen tall; the mask fades the
+   first and last rows out at the edges so the cut reads as intentional, not
+   as a clipped layout. Kept in CSS (not inline) so print can unfold it. */
+.pf-work-scroll {
+  max-height: 246px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scroll-padding-block: 18px;
+  /* bleed 8px past the text column so the row hover pill isn't clipped */
+  margin: 0 -8px;
+  padding: 0 8px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%);
+}
+/* the list scrolls, so it must be reachable by keyboard — none of its rows are
+   focusable while the projects carry no href */
+.pf-work-scroll:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: var(--radius-sm); }
 
 .pf-work-scroll::-webkit-scrollbar { width: 6px; }
 .pf-work-scroll::-webkit-scrollbar-track { background: transparent; }
 .pf-work-scroll::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 3px; }
 .pf-work-scroll:hover::-webkit-scrollbar-thumb { background: var(--scroll-thumb-hover); }
 
-.pf-grid { display: grid; grid-template-columns: 64px 1fr 96px 168px 76px 24px; gap: 20px; align-items: center; }
+/* Stack needs ~130px: "React · TypeScript" at 11px mono wraps below that, and a
+   wrapped chip list makes row heights uneven. Role gives up the width. */
+.pf-grid { display: grid; grid-template-columns: 64px 1fr 132px 132px 76px 24px; gap: 20px; align-items: center; }
 
-.pf-row { padding: 15px 8px; border-bottom: 1px solid var(--line); border-radius: 8px; text-decoration: none; color: inherit; }
+.pf-row { padding: 16px 8px; border-bottom: 1px solid var(--line); border-radius: var(--radius-sm); text-decoration: none; color: inherit; }
 a.pf-row { cursor: pointer; }
 a.pf-row:hover { background: var(--panel); }
-a.pf-row:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
-.pf-chev { transition: transform .18s ease; }
+.pf-chev { transition: transform var(--dur-fast) var(--ease-out); }
 a.pf-row:hover .pf-chev, a.pf-row:focus-visible .pf-chev { transform: translateX(3px); }
 
-.pf-nav a { color: var(--fg2); text-decoration: none; border-radius: 6px; }
-.pf-nav a:hover { color: var(--ink); }
-.pf-link { color: inherit; text-decoration: none; transition: opacity .15s ease; }
-.pf-link:hover { opacity: .7; }
-.pf-nav a:focus-visible, .pf-link:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.pf-link { color: inherit; text-decoration: none; }
+/* dim via color, not opacity: color is in the transition set above, so this
+   eases like every other hover — opacity would snap. fg2 keeps AA headroom. */
+.pf-link:hover { color: var(--fg2); }
 
-.pf-iconbtn { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--lineStrong); background: transparent; color: var(--fg2); cursor: pointer; }
-.pf-iconbtn:hover { color: var(--ink); border-color: var(--ink); background: var(--panel); }
-.pf-iconbtn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.pf-iconbtn { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: var(--radius-md); border: 1px solid var(--lineStrong); background: transparent; color: var(--fg2); cursor: pointer; }
+.pf-social { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; border: 1px solid var(--lineStrong); border-radius: 999px; font-size: 14px; font-weight: 600; color: var(--fg2); text-decoration: none; }
+.pf-iconbtn:hover, .pf-social:hover { color: var(--ink); border-color: var(--ink); background: var(--panel); }
 
-.pf-social { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px; border: 1px solid var(--lineStrong); border-radius: 999px; font-size: 13px; font-weight: 600; color: var(--fg2); text-decoration: none; }
-.pf-social:hover { color: var(--ink); border-color: var(--ink); background: var(--panel); }
-.pf-social:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+/* one focus ring, offset varies by element */
+.pf-card :is(a.pf-row, .pf-link, .pf-iconbtn, .pf-social):focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: var(--focus-offset, 2px);
+}
+a.pf-row { --focus-offset: -2px; }
+.pf-link { --focus-offset: 3px; }
 
-.pf-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; max-width: 520px; }
-.pf-tag { font-family: ${MONO}; font-size: 12px; color: var(--fg2); padding: 5px 11px; border: 1px solid var(--lineStrong); border-radius: 999px; white-space: nowrap; }
+/* it's a <ul>: the resets live with the rest of its layout, not inline */
+.pf-tags { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 24px 0 0; padding: 0; max-width: 520px; }
+.pf-tag { font-family: ${MONO}; font-size: 12px; color: var(--fg2); padding: 5px 12px; border: 1px solid var(--lineStrong); border-radius: 999px; white-space: nowrap; }
+
+/* per-project stack chips, in the column the fake sparkline used to occupy */
+.pf-stack { display: flex; flex-wrap: wrap; gap: 4px; }
+.pf-stack span { font-family: ${MONO}; font-size: 11px; color: var(--fg3); white-space: nowrap; }
+.pf-stack span + span::before { content: "·"; margin-right: 4px; }
 
 @keyframes pf-rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-.pf-anim { animation: pf-rise .6s cubic-bezier(.2,.7,.2,1) both; }
+.pf-anim { animation: pf-rise .6s var(--ease-out) both; }
+
+/* selection mirrors the headline highlight — the same tested pair, so
+   selected text keeps its contrast in both themes */
+.pf-card ::selection { background: var(--hl-bg); color: var(--hl-ink); }
+
+/* Layout values live here, not inline. Inline styles can't answer a media
+   query, and CSS can only outrank them with !important — which is why this
+   file used to carry fifteen of them. */
+.pf-hero { display: flex; align-items: center; gap: 48px; margin-bottom: 44px; }
+.pf-photo { width: 300px; height: 316px; flex: none; border-radius: var(--radius-lg); overflow: hidden; background: var(--panel); border: 1px solid var(--lineStrong); display: flex; align-items: center; justify-content: center; }
+.pf-social-row { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+
+/* one rule replaces an eight-step font-size ladder; max deviation ~2px */
+.pf-h1 { margin: 0; font-size: clamp(26px, 2.8vw + 16px, 64px); line-height: 1.18; font-weight: 600; letter-spacing: -0.03em; word-break: keep-all; }
 
 /* ── 1) ≤1200px · 좁은 데스크톱/노트북 ───────────────────────── */
 @media (max-width: 1200px) {
   .pf-pad { padding: 36px 44px 40px; }
-  .pf-h1 { font-size: 48px !important; }
-  .pf-photo { width: 280px !important; height: 300px !important; }
-  .pf-grid { grid-template-columns: 56px 1fr 88px 150px 70px 22px; gap: 16px; }
+  .pf-photo { width: 280px; height: 300px; }
+  .pf-grid { grid-template-columns: 56px 1fr 126px 118px 70px 22px; gap: 16px; }
 }
 
 /* ── 2) ≤1024px · 태블릿 가로 ─────────────────────────────────── */
 @media (max-width: 1024px) {
   .pf-pad { padding: 34px 38px 38px; }
-  .pf-h1 { font-size: 44px !important; }
-  .pf-hero { gap: 36px !important; }
-  .pf-photo { width: 248px !important; height: 272px !important; }
-  .pf-grid { grid-template-columns: 52px 1fr 80px 132px 64px 20px; gap: 14px; }
+  .pf-hero { gap: 36px; }
+  .pf-photo { width: 248px; height: 272px; }
+  .pf-grid { grid-template-columns: 52px 1fr 120px 104px 64px 20px; gap: 14px; }
 }
 
-/* ── 3) ≤880px · 태블릿 세로 (히어로 세로 스택, 스파크라인 숨김) ── */
+/* ── 3) ≤880px · 태블릿 세로 (히어로 세로 스택, 스택 열 숨김) ──── */
 @media (max-width: 880px) {
-  .pf-hero { flex-direction: column-reverse; align-items: stretch !important; gap: 24px !important; }
-  .pf-photo { width: 100% !important; height: 240px !important; }
-  .pf-h1 { font-size: 42px !important; }
+  .pf-hero { flex-direction: column-reverse; align-items: stretch; gap: 24px; }
+  /* square, not full-bleed: the portrait is 1:1, and a full-width letterbox
+     crops it to a band across the eyes */
+  .pf-photo { width: 240px; height: 240px; align-self: center; }
   .pf-grid { grid-template-columns: 48px 1fr 140px 64px 20px; gap: 14px; }
-  .pf-col-spark { display: none; }
+  .pf-col-stack { display: none; }
 }
 
-/* ── 4) ≤720px · 큰 휴대폰 (Discipline 열까지 숨김) ──────────────── */
+/* ── 4) ≤720px · 큰 휴대폰 (Role 열까지 숨김) ───────────────────── */
 @media (max-width: 720px) {
   .pf-pad { padding: 28px 24px 32px; }
-  .pf-h1 { font-size: 36px !important; }
-  .pf-photo { height: 220px !important; }
+  .pf-photo { width: 220px; height: 220px; }
   .pf-grid { grid-template-columns: 40px 1fr 64px 20px; gap: 12px; }
-  .pf-col-disc { display: none; }
+  .pf-col-role { display: none; }
+  .pf-iconbtn { width: 44px; height: 44px; }   /* thumb target */
 }
 
 /* ── 5) ≤560px · 휴대폰 (소셜 버튼 세로 풀폭) ────────────────────── */
 @media (max-width: 560px) {
   .pf-pad { padding: 22px 18px 26px; }
-  .pf-h1 { font-size: 30px !important; }
-  .pf-hero { gap: 20px !important; }
-  .pf-photo { height: 190px !important; }
-  .pf-social-row { flex-direction: column; align-items: stretch !important; }
-  .pf-social { justify-content: center; height: 42px; }
+  .pf-hero { gap: 20px; }
+  .pf-photo { width: 196px; height: 196px; }
+  .pf-social-row { flex-direction: column; align-items: stretch; }
+  .pf-social { justify-content: center; height: 44px; }
+  /* the <br> in the headline is load-bearing: it stands in for the only space
+     between "아니라," and "AI로". Hiding it welds them into one token that
+     word-break: keep-all refuses to split, and the card overflows. */
 }
 
 /* ── 6) ≤400px · 소형 휴대폰 ──────────────────────────────────── */
 @media (max-width: 400px) {
   .pf-pad { padding: 18px 14px 22px; }
-  .pf-h1 { font-size: 26px !important; }
   .pf-grid { grid-template-columns: 34px 1fr 52px 18px; gap: 10px; }
 }
 
 /* ── 0a) ≥1440px · 대형 데스크톱 ─────────────────────────────── */
 @media (min-width: 1440px) {
-  .pf-card { width: 1360px; }
+  .pf-card { width: min(1360px, 100%); }
   .pf-pad { padding: 48px 64px 52px; }
-  .pf-h1 { font-size: 58px !important; }
-  .pf-photo { width: 320px !important; height: 340px !important; }
-  .pf-grid { grid-template-columns: 72px 1fr 108px 184px 84px 26px; gap: 24px; }
+  .pf-photo { width: 320px; height: 340px; }
+  .pf-grid { grid-template-columns: 72px 1fr 148px 148px 84px 26px; gap: 24px; }
 }
 
 /* ── 0b) ≥1680px · 초대형 / 와이드 모니터 ─────────────────────── */
 @media (min-width: 1680px) {
-  .pf-card { width: 1480px; }
+  .pf-card { width: min(1480px, 100%); }
   .pf-pad { padding: 52px 72px 56px; }
-  .pf-h1 { font-size: 64px !important; }
-  .pf-photo { width: 344px !important; height: 364px !important; }
+  .pf-photo { width: 344px; height: 364px; }
 }
 
 /* ── 0c) 초고해상도 (FHD~8K) · 카드 전체를 zoom으로 비례 확대 ──────
    가로 너비 + 세로 높이를 함께 만족할 때만 확대한다. 높이를 같이
    보지 않으면 와이드하지만 낮은 화면(예: 2560×1440)에서 카드가
-   위아래로 잘린다(바깥 프레임이 overflow:hidden이라 안 보임). */
+   뷰포트보다 길어져 세로 스크롤이 생긴다(바깥 프레임은 overflow:auto)
+   — "한 화면" 레이아웃이 깨진다. */
 @media (min-width: 1920px) and (min-height: 1240px) { .pf-card { zoom: 1.15; } }  /* FHD 1080p */
 @media (min-width: 2560px) and (min-height: 1480px) { .pf-card { zoom: 1.35; } }  /* QHD 1440p */
 @media (min-width: 3440px) and (min-height: 1720px) { .pf-card { zoom: 1.60; } }  /* UltraWide */
@@ -283,6 +370,17 @@ a.pf-row:hover .pf-chev, a.pf-row:focus-visible .pf-chev { transform: translateX
 @media (min-width: 5120px) and (min-height: 2680px) { .pf-card { zoom: 2.50; } }  /* 5K */
 @media (min-width: 6016px) and (min-height: 3200px) { .pf-card { zoom: 3.10; } }  /* 6K */
 @media (min-width: 7680px) and (min-height: 4000px) { .pf-card { zoom: 3.80; } }  /* 8K UHD */
+
+/* ── 인쇄 · 채용 담당자의 "PDF로 저장" ──────────────────────────
+   다크 토큰은 위의 @media screen 안에 있어 인쇄에선 라이트 값으로
+   떨어진다. 여기서는 화면 전용 장치만 걷어낸다. */
+@media print {
+  .pf-card { --card-shadow: none; }  /* the inline box-shadow reads this var */
+  /* unfold the internal scroll: paper has no scrollbar, so show every row */
+  .pf-work-scroll { max-height: none; overflow: visible; -webkit-mask-image: none; mask-image: none; }
+  .pf-iconbtn { display: none; }     /* theme toggle is meaningless on paper */
+  .pf-anim { animation: none; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .pf-anim { animation: none; }
@@ -299,7 +397,10 @@ export interface PortfolioProps {
   headline?: ReactNode;
   /** intro paragraph */
   intro?: string;
-  /** Portrait image URL; falls back to a placeholder block when omitted. */
+  /** Portrait image URL. Served from public/, so the path is root-relative.
+      Source of truth is img/ — public/profile.webp is a 700px derivative.
+      Re-encoding the source PNG as PNG is a trap: it is 8-bit palette art, and
+      a 24-bit re-encode lands at ~675KB, larger than the 1254px original. */
   photoSrc?: string;
   projects?: Project[];
   /** footer availability label */
@@ -321,8 +422,9 @@ function initialsOf(name: string) {
     .toUpperCase();
 }
 
-/** Light by default. Only a past explicit toggle (persisted, and replayed by the
-    inline script in index.html before paint) switches it to dark. */
+/** Whatever the boot script in index.html already resolved and painted with —
+    a stored toggle if there is one, otherwise the OS preference. Re-deriving it
+    here would risk disagreeing with the markup that is already on screen. */
 function getInitialTheme(): "light" | "dark" {
   if (typeof document !== "undefined") {
     const t = document.documentElement.getAttribute("data-theme");
@@ -332,28 +434,61 @@ function getInitialTheme(): "light" | "dark" {
 }
 
 export default function Portfolio({
-  name = "Hyeongrae RHO",
+  name = "Hyeongrae Rho",
   email = "rhl9509@naver.com",
-  tagline = "Full-stack & AI",
+  tagline = "AI Engineering · Full-stack",
   headline = (
     <>
-      인프라부터 AI까지,<br />혼자서{" "}
-      <span style={{ background: V.hlBg, color: V.hlInk, padding: "0.02em 0.16em", borderRadius: 4, WebkitBoxDecorationBreak: "clone", boxDecorationBreak: "clone" }}>끝까지</span>.
+      AI를 붙이는 게 아니라,<br />AI로{" "}
+      <span style={{ background: V.hlBg, color: V.hlInk, padding: "0.02em 0.16em", borderRadius: "var(--radius-xs)", WebkitBoxDecorationBreak: "clone", boxDecorationBreak: "clone" }}>돌아가는</span> 시스템을 만듭니다.
     </>
   ),
-  intro = "인프라부터 프론트, 서버, 모델 연동까지 전체 흐름을 직접 설계하고 구현합니다. 기술의 경계를 나누지 않고 만듭니다.",
-  photoSrc,
+  intro = "AI는 만들 수 있는 사람이 많아졌습니다. 어려운 건 그게 매일의 업무 위에서 실제로 도는 상태, AX입니다. 모델 혼자 되는 일이 아니라 인프라와 서버, 프론트가 함께 받쳐야 하는 일이라, 그 전체를 풀스택으로 만듭니다.",
+  photoSrc = "/profile.webp",
   projects = PROJECTS,
-  availability = "2026 작업 의뢰 가능",
+  availability = "2026 채용·프로젝트 문의 환영",
   githubHref = "https://github.com/rhl0509",
   instagramHref = "https://instagram.com/hyeongrae_r",
-  stack = ["React", "TypeScript", "Next.js", "Python", "FastAPI", "Flask", "PostgreSQL", "MySQL", "AWS", "Linux", "Docker", "LLM / RAG"],
+  /* Ordered to trace the intro's own claim — AX first, then the 인프라·서버·프론트
+     that has to hold it up.
+     AX leads by choice and is the one chip that is not a technology: it names the
+     intro's claim rather than a tool. Everything after it is backed by code that
+     exists on disk — a badge nobody can produce a repo for is a liability in an
+     interview, not a keyword.
+     Dropped from the template list: PostgreSQL and AWS (zero usage anywhere —
+     this page's own badge was the only occurrence), Linux (a base image is not
+     the skill), Flask (real, but listing it beside FastAPI reads as neither one
+     deeply), React (Next.js is React — the word still shows up in the work
+     list's Stack column).
+     Wrapping is left alone: any count orphans a chip at some width, so the list
+     is chosen by what it claims, not by where it happens to break. */
+  stack = ["AX", "ML Pipeline", "Python", "FastAPI", "MySQL", "Next.js", "TypeScript", "Docker", "GitHub Actions"],
 }: PortfolioProps) {
   const [theme, setTheme] = useState<"light" | "dark">(getInitialTheme);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
+    // keep the browser chrome in step with the page
+    document.getElementById("theme-color")?.setAttribute("content", THEME_COLOR[theme]);
   }, [theme]);
+
+  // Follow live OS theme changes (sunset auto-dark, etc.) — but only while the
+  // visitor has no explicit stored choice, the same precedence the boot script
+  // applies at first paint.
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const onChange = (e: MediaQueryListEvent) => {
+      try {
+        const s = localStorage.getItem("theme");
+        if (s === "dark" || s === "light") return;
+      } catch {
+        /* unreadable storage — treat as no stored choice */
+      }
+      setTheme(e.matches ? "dark" : "light");
+    };
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   // persist only on an explicit toggle — auto-persisting on mount would freeze
   // the default into every visitor's storage on their first visit.
@@ -379,74 +514,77 @@ export default function Portfolio({
     : "";
 
   return (
-    <div className="pf-card" data-theme={theme} style={{ background: V.surface, border: "1px solid var(--card-border)", borderRadius: 16, overflow: "hidden", boxShadow: "var(--card-shadow)", fontFamily: "'Pretendard Variable', Pretendard, system-ui, sans-serif", WebkitFontSmoothing: "antialiased", color: V.ink }}>
+    <div className="pf-card" data-theme={theme} style={{ background: V.surface, border: `1px solid ${V.cardBorder}`, borderRadius: "var(--radius-xl)", overflow: "hidden", boxShadow: V.cardShadow, fontFamily: "'Pretendard Variable', Pretendard, system-ui, sans-serif", WebkitFontSmoothing: "antialiased", color: V.ink }}>
       <style>{STYLE}</style>
-      <div className="pf-pad">
+      <main className="pf-pad">
         {/* top bar */}
         <header className="pf-anim" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 48, flexWrap: "wrap", gap: 16 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <div style={{ width: 34, height: 34, borderRadius: 9, background: V.logoBg, color: V.logoInk, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 14, letterSpacing: "-0.03em" }}>{initialsOf(name)}</div>
+            <div style={{ width: 36, height: 36, borderRadius: "var(--radius-md)", background: V.logoBg, color: V.logoInk, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 14, letterSpacing: "-0.03em" }} aria-hidden="true">{initialsOf(name)}</div>
             <span style={{ fontSize: 14, fontWeight: 600 }}>{name}</span>
           </div>
-          <nav className="pf-nav" style={{ display: "flex", alignItems: "center", gap: 20, fontSize: 14 }}>
-            <span style={{ display: "flex", alignItems: "center", gap: 7, color: V.fg2 }}><Dot />Open to work</span>
+          {/* not a <nav>: it holds a status badge and a toggle, no navigation */}
+          <div style={{ display: "flex", alignItems: "center", gap: 20, fontSize: 14 }}>
+            <span lang="en" style={{ display: "flex", alignItems: "center", gap: 8, color: V.fg2 }}><Dot />Open to work</span>
             <ThemeToggle theme={theme} onToggle={toggleTheme} />
-          </nav>
+          </div>
         </header>
 
         {/* hero */}
-        <section className="pf-hero pf-anim" id="about" style={{ display: "flex", alignItems: "center", gap: 48, marginBottom: 44, animationDelay: ".06s" }}>
+        <section className="pf-hero pf-anim" id="about" style={{ animationDelay: ".06s" }}>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontFamily: MONO, fontSize: 12, fontWeight: 500, letterSpacing: "0.1em", textTransform: "uppercase", color: V.fg3, marginBottom: 16 }}>{tagline}</div>
-            <h1 className="pf-h1" style={{ margin: 0, fontSize: 52, lineHeight: 1.08, fontWeight: 600, letterSpacing: "-0.03em" }}>{headline}</h1>
+            {/* no fontWeight: only the 400 cut of JetBrains Mono is loaded, so the
+                previous 500 was already silently matching down to 400 */}
+            <div style={{ fontFamily: MONO, fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase", color: V.fg3, marginBottom: 16 }}>{tagline}</div>
+            <h1 className="pf-h1">{headline}</h1>
             <p style={{ margin: "20px 0 0", fontSize: 17, lineHeight: 1.55, color: V.fg2, maxWidth: 520, wordBreak: "keep-all" }}>{intro}</p>
             {stack.length > 0 && (
-              <ul className="pf-tags" aria-label="기술 스택" style={{ listStyle: "none", padding: 0 }}>
+              /* role="list" is not redundant: list-style none strips the list
+                 semantics in Safari/VoiceOver, and this puts them back */
+              <ul className="pf-tags" role="list" aria-label="기술 스택">
                 {stack.map((t) => (
                   <li key={t} className="pf-tag">{t}</li>
                 ))}
               </ul>
             )}
           </div>
-          <div className="pf-photo" style={{ width: 300, height: 316, flex: "none", borderRadius: 18, overflow: "hidden", background: V.panel, border: "1px solid var(--lineStrong)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            {photoSrc ? (
-              <img src={photoSrc} alt={name} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-            ) : (
-              <span style={{ ...monoLabel, fontSize: 12 }}>내 사진</span>
-            )}
+          <div className="pf-photo">
+            <img src={photoSrc} alt={name} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
           </div>
         </section>
 
         {/* social links */}
-        <div className="pf-anim pf-social-row" style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 28, animationDelay: ".09s" }}>
+        <div className="pf-anim pf-social-row" style={{ animationDelay: ".09s" }}>
           <SocialButton href={githubHref} icon={<GitHubIcon />} label="GitHub" />
           <SocialButton href={instagramHref} icon={<InstagramIcon />} label="Instagram" />
         </div>
 
         {/* selected work */}
         <section id="work" className="pf-anim" style={{ animationDelay: ".12s" }}>
-          <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 8 }}>
-            <h2 style={{ margin: 0, fontSize: 13, fontWeight: 600 }}>Selected work</h2>
+          <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 12 }}>
+            <h2 lang="en" style={{ margin: 0, fontSize: 20, fontWeight: 700, letterSpacing: "-0.02em" }}>Selected work</h2>
             <span style={{ fontFamily: MONO, fontSize: 12, color: V.fg3 }}>{String(projects.length).padStart(2, "0")} projects{yearRange ? ` · ${yearRange}` : ""}</span>
           </div>
 
           {/* index header */}
-          <div className="pf-grid" style={{ padding: "0 8px 12px", borderBottom: "1px solid var(--lineStrong)", ...monoLabel }}>
-            <span>No.</span><span>Project</span><span className="pf-col-spark" /><span className="pf-col-disc">Discipline</span><span style={{ textAlign: "right" }}>Year</span><span />
+          <div className="pf-grid" lang="en" style={{ padding: "0 8px 12px", borderBottom: `1px solid ${V.lineStrong}`, ...monoLabel }}>
+            <span>No.</span><span>Project</span><span className="pf-col-stack">Stack</span><span className="pf-col-role">Role</span><span style={{ textAlign: "right" }}>Year</span><span />
           </div>
 
           {/* scrolling rows */}
-          <div className="pf-work-scroll" style={{ maxHeight: 246, overflowY: "auto", overflowX: "hidden", margin: "0 -8px", padding: "0 8px", WebkitMaskImage: "linear-gradient(to bottom, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%)", maskImage: "linear-gradient(to bottom, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%)" }}>
+          <div className="pf-work-scroll" role="group" tabIndex={0} aria-label={`Selected work — 프로젝트 ${projects.length}개, 스크롤 가능`}>
             {projects.map((p) => {
               const cells = (
                 <>
-                  <span style={{ fontFamily: MONO, fontSize: 14, color: p.accent }}>{p.no}</span>
+                  <span style={{ fontFamily: MONO, fontSize: 14, color: V.fg3 }}>{p.no}</span>
                   <div>
                     <div style={{ fontSize: 19, fontWeight: 600 }}>{p.name}</div>
-                    <div style={{ fontSize: 14, color: V.fg3, marginTop: 3 }}>{p.desc}</div>
+                    <div style={{ fontSize: 14, color: V.fg3, marginTop: 4 }}>{p.desc}</div>
                   </div>
-                  <span className="pf-col-spark"><Sparkline points={p.spark} color={p.accent} /></span>
-                  <span className="pf-col-disc" style={{ fontSize: 14, color: V.fg2 }}>{p.discipline}</span>
+                  <span className="pf-col-stack pf-stack">
+                    {p.stack.map((s) => <span key={s}>{s}</span>)}
+                  </span>
+                  <span className="pf-col-role" style={{ fontSize: 14, color: V.fg2 }}>{p.role}</span>
                   <span style={{ fontFamily: MONO, fontSize: 14, color: V.fg2, textAlign: "right" }}>{p.year}</span>
                   <span style={{ display: "flex", justifyContent: "flex-end" }}>{p.href ? <Chevron /> : null}</span>
                 </>
@@ -454,7 +592,7 @@ export default function Portfolio({
               // Only render a link when there is an actual destination; rows
               // without href are plain (no pointer, not focusable).
               return p.href ? (
-                <a key={p.no} className="pf-row pf-grid" href={p.href} aria-label={`${p.name} — ${p.desc}, ${p.discipline}, ${p.year}`}>
+                <a key={p.no} className="pf-row pf-grid" href={p.href} aria-label={`${p.name} 자세히 보기`}>
                   {cells}
                 </a>
               ) : (
@@ -467,11 +605,11 @@ export default function Portfolio({
         </section>
 
         {/* footer */}
-        <footer className="pf-anim" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 32, paddingTop: 24, borderTop: "1px solid var(--line)", flexWrap: "wrap", gap: 12, animationDelay: ".18s" }}>
-          <span style={{ display: "flex", alignItems: "center", gap: 9, fontSize: 14, color: V.fg2 }}><Dot />{availability}</span>
+        <footer className="pf-anim" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 32, paddingTop: 24, borderTop: `1px solid ${V.line}`, flexWrap: "wrap", gap: 12, animationDelay: ".18s" }}>
+          <span style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 14, color: V.fg2 }}><Dot />{availability}</span>
           <a className="pf-link" href={`mailto:${email}`} style={{ fontFamily: MONO, fontSize: 14 }}>{email}</a>
         </footer>
-      </div>
+      </main>
     </div>
   );
 }
