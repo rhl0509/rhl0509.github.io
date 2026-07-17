@@ -48,16 +48,27 @@ export interface Project {
   href?: string;
 }
 
-/* Every entry here is a real thing on disk. The template shipped six invented
-   projects; the last of them (Meridian Terminal — a trading workspace that was
-   only ever a spec) is gone, so the list no longer claims anything that cannot
-   be produced on request. Four verifiable rows beat five with one bluff.
-   Keep it that way: an entry earns its slot by existing, not by rounding the
-   list out. None carries an href yet — every backing repo is private except
-   crack's, and that one is a stale April snapshot with no README.
-   `no` is display text, not an index — deleting from the top keeps 04…01
+/* Every entry here is a real, inspectable thing. The template shipped six
+   invented projects; the last of them (Meridian Terminal — a trading workspace
+   that was only ever a spec) is gone, so the list no longer claims anything that
+   cannot be produced on request. Keep it that way: an entry earns its slot by
+   existing, not by rounding the list out.
+   The two hrefs both 404 for visitors — see each row's note. Every backing repo
+   is private except crack's, and that one is a stale April snapshot with no
+   README, so it is not linked either.
+   `no` is display text, not an index — deleting from the top keeps 05…01
    contiguous, so nothing renumbers. Delete from the middle and it will. */
 export const PROJECTS: Project[] = [
+  /* real — RoadAeye/Road_A_Eye, a team project (AI-X final). Everything in
+     stack is from the backend README: FastAPI 0.115 + SQLAlchemy 2.0 async +
+     aiomysql, JWT (pyjwt) + bcrypt, a Next.js front on :3000, an AI server on
+     :8001; db/schema holds ai_db / board_db / chat_db / member_db.
+     KNOWN, two layers deep: the repo is private (404 to visitors, as with 04),
+     AND this URL lands on `main`, which holds one "Initial commit" and nothing
+     else — the work lives on `develop` (apps/, db/, docs/; 12 commits). So even
+     a reader with access sees an empty repo. Both facts were verified and the
+     owner chose this URL anyway; .../tree/develop is the fix if that changes. */
+  { no: "05", name: "Road A Eye", desc: "고속도로 CCTV 기반 위험차량 감지·관제", role: "Team Lead", year: "2026", stack: ["Next.js", "FastAPI", "JWT", "DB 이중화", "ITS API"], href: "https://github.com/RoadAeye/Road_A_Eye" },
   /* real (D:\auto_agent). 62종 is counted, not quoted: 62 of the 63 top-level
      .md files carry a `name:` frontmatter (design-agents.md is the odd one),
      which matches the repo README's own figure.
