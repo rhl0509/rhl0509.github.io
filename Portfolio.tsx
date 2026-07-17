@@ -62,7 +62,7 @@ export const PROJECTS: Project[] = [
      Those feed feature_v2 → train_v2 → predict_v2 → backtest_v2 →
      daily_recommend. Year from git: first commits 2026-06.
      No href: D:\stock_git is the deploy repo and it is private. */
-  { no: "03", name: "stock", desc: "시세·수급·공시 수집부터 예측·백테스트까지", role: "Portfolio", year: "2026", stack: ["Full-stack", "머신러닝"] },
+  { no: "03", name: "AI Stock", desc: "시세·수급·공시 수집부터 예측·백테스트까지", role: "Portfolio", year: "2026", stack: ["Full-stack", "머신러닝"] },
   /* real (D:\expense_tracker) — actually Next.js 16 + FastAPI + MySQL, recorded
      here because the Stack cell now carries "Full-stack" instead of the tech
      list (owner's call). "AI API" is routes/expense_ai.py, which instantiates
