@@ -54,7 +54,14 @@ export interface Project {
    contiguous, so nothing renumbers. Delete from the middle and it will. */
 export const PROJECTS: Project[] = [
   { no: "05", name: "Meridian Terminal", desc: "기관용 트레이딩 워크스페이스", role: "Full-stack", year: "2026", stack: ["Next.js", "MySQL"] },
-  { no: "04", name: "Onboarding", desc: "핀테크 가입 흐름 재설계", role: "Frontend", year: "2026", stack: ["React", "TypeScript"] },
+  /* real (D:\auto_agent). 62종 is counted, not quoted: 62 of the 63 top-level
+     .md files carry a `name:` frontmatter (design-agents.md is the odd one),
+     which matches the repo README's own figure.
+     href is deliberately absent even though one was requested: the repo
+     (rhl0509/claude-agents) is private, so github.com/rhl0509/claude-agents
+     answers 404 to everyone but its owner. Make it public and add the href —
+     until then a live-looking button that 404s is worse than none. */
+  { no: "04", name: "AX-agent", desc: "Claude Code 서브에이전트 62종 + 훅 자동화", role: "Team Lead", year: "2026", stack: ["Anthropic API"] },
   /* real (D:\stock_tracker) — FastAPI + React client + MySQL. The 머신러닝 half
      is XGBoost_v2/, and the three nouns in desc are what it actually pulls:
      시세 = pykrx adjusted OHLCV (collect_universe/collect_v2), 수급 =
