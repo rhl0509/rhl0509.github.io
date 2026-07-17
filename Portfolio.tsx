@@ -62,7 +62,7 @@ export const PROJECTS: Project[] = [
      an Anthropic client. No href: the backend repo is private and the Next.js
      frontend its README points to (rhl0509/expense_frontend) does not exist on
      GitHub. */
-  { no: "02", name: "가계부 Pro", desc: "개인·가구 공유 가계부", role: "Portfolio", year: "2026", stack: ["Full-stack", "AI API"] },
+  { no: "02", name: "AI가계부", desc: "개인·가구 공유 가계부", role: "Portfolio", year: "2026", stack: ["Full-stack", "AI API"] },
   /* real (D:\crack), team project — MBC 2026 대보정보통신 선도교육 2조.
      desc/stack describe the local state: the 싱크홀·SAM2 half is not in the
      public repo, which was last pushed 2026-04-09. href deliberately omitted —
