@@ -61,11 +61,13 @@ export const PROJECTS: Project[] = [
   /* real (D:\auto_agent). 62종 is counted, not quoted: 62 of the 63 top-level
      .md files carry a `name:` frontmatter (design-agents.md is the odd one),
      which matches the repo README's own figure.
-     href is deliberately absent even though one was requested: the repo
-     (rhl0509/claude-agents) is private, so github.com/rhl0509/claude-agents
-     answers 404 to everyone but its owner. Make it public and add the href —
-     until then a live-looking button that 404s is worse than none. */
-  { no: "04", name: "AX-agent", desc: "Claude Code 서브에이전트 62종 + 훅 자동화", role: "Team Lead", year: "2026", stack: ["Anthropic API"] },
+     KNOWN: this href 404s for visitors. rhl0509/claude-agents is private, and
+     GitHub answers 404 (not 403) for private repos so their existence stays
+     hidden — so the link reads as broken, not as locked. It is here by the
+     owner's explicit decision, made after that was verified; do not "fix" it by
+     deleting the href. Flipping the repo to public is what makes it work, and
+     the repo already reads as if it were (its README carries a git clone URL). */
+  { no: "04", name: "AX-agent", desc: "Claude Code 서브에이전트 62종 + 훅 자동화", role: "Team Lead", year: "2026", stack: ["Anthropic API"], href: "https://github.com/rhl0509/claude-agents" },
   /* real (D:\stock_tracker) — FastAPI + React client + MySQL. The 머신러닝 half
      is XGBoost_v2/, and the three nouns in desc are what it actually pulls:
      시세 = pykrx adjusted OHLCV (collect_universe/collect_v2), 수급 =
