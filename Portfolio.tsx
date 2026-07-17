@@ -48,12 +48,16 @@ export interface Project {
   href?: string;
 }
 
-/* Slots 03–01 are real; 05 and 04 are still the template's placeholder cast,
-   being replaced slot by slot. Neither exists, so neither can carry an href.
-   `no` is display text, not an index — deleting from the top keeps 05…01
+/* Every entry here is a real thing on disk. The template shipped six invented
+   projects; the last of them (Meridian Terminal — a trading workspace that was
+   only ever a spec) is gone, so the list no longer claims anything that cannot
+   be produced on request. Four verifiable rows beat five with one bluff.
+   Keep it that way: an entry earns its slot by existing, not by rounding the
+   list out. None carries an href yet — every backing repo is private except
+   crack's, and that one is a stale April snapshot with no README.
+   `no` is display text, not an index — deleting from the top keeps 04…01
    contiguous, so nothing renumbers. Delete from the middle and it will. */
 export const PROJECTS: Project[] = [
-  { no: "05", name: "Meridian Terminal", desc: "기관용 트레이딩 워크스페이스", role: "Full-stack", year: "2026", stack: ["Next.js", "MySQL"] },
   /* real (D:\auto_agent). 62종 is counted, not quoted: 62 of the 63 top-level
      .md files carry a `name:` frontmatter (design-agents.md is the odd one),
      which matches the repo README's own figure.
