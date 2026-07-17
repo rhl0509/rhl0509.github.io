@@ -55,11 +55,14 @@ export interface Project {
 export const PROJECTS: Project[] = [
   { no: "05", name: "Meridian Terminal", desc: "기관용 트레이딩 워크스페이스", role: "Full-stack", year: "2026", stack: ["Next.js", "MySQL"] },
   { no: "04", name: "Onboarding", desc: "핀테크 가입 흐름 재설계", role: "Frontend", year: "2026", stack: ["React", "TypeScript"] },
-  /* real (D:\stock_tracker) — FastAPI + React client + MySQL, and the 머신러닝
-     half is XGBoost_v2/ (collect → predict → backtest → daily_recommend) plus
-     kiwoom_client for the broker feed. Year from git: first commits 2026-06.
+  /* real (D:\stock_tracker) — FastAPI + React client + MySQL. The 머신러닝 half
+     is XGBoost_v2/, and the three nouns in desc are what it actually pulls:
+     시세 = pykrx adjusted OHLCV (collect_universe/collect_v2), 수급 =
+     flow_history (collect_flow), 공시 = DART (collect_disclosure/dart_client).
+     Those feed feature_v2 → train_v2 → predict_v2 → backtest_v2 →
+     daily_recommend. Year from git: first commits 2026-06.
      No href: D:\stock_git is the deploy repo and it is private. */
-  { no: "03", name: "stock", desc: "주식 수집·예측·백테스트 파이프라인", role: "Portfolio", year: "2026", stack: ["Full-stack", "머신러닝"] },
+  { no: "03", name: "stock", desc: "시세·수급·공시 수집부터 예측·백테스트까지", role: "Portfolio", year: "2026", stack: ["Full-stack", "머신러닝"] },
   /* real (D:\expense_tracker) — actually Next.js 16 + FastAPI + MySQL, recorded
      here because the Stack cell now carries "Full-stack" instead of the tech
      list (owner's call). "AI API" is routes/expense_ai.py, which instantiates
