@@ -43,25 +43,42 @@ export interface Project {
   year: string;
   /** headline technologies, 2–3 max before the column wraps */
   stack: string[];
-  /** optional case-study or repo link */
+  /** Case-study or repo URL. Set it and the row's Link column grows a button
+      that opens it in a new tab; leave it off and that cell stays empty. */
   href?: string;
 }
 
-/* PLACEHOLDER — none of these are real projects. They came with the template
-   and exist only to keep the layout honest until the real list lands. */
+/* Slots 02 and 01 are real; 05–03 are still the template's placeholder cast,
+   being replaced slot by slot. None of 05–03 exists, so none can carry an href.
+   `no` is display text, not an index — deleting from the top keeps 05…01
+   contiguous, so nothing renumbers. Delete from the middle and it will. */
 export const PROJECTS: Project[] = [
-  { no: "06", name: "GAGYE", desc: "가계부와 주식을 하나로", role: "Full-stack", year: "2026", stack: ["React", "FastAPI"] },
   { no: "05", name: "Meridian Terminal", desc: "기관용 트레이딩 워크스페이스", role: "Full-stack", year: "2026", stack: ["Next.js", "MySQL"] },
   { no: "04", name: "Onboarding", desc: "핀테크 가입 흐름 재설계", role: "Frontend", year: "2026", stack: ["React", "TypeScript"] },
   { no: "03", name: "Numeral", desc: "숫자 중심 타입 시스템", role: "Frontend", year: "2026", stack: ["TypeScript"] },
-  { no: "02", name: "Compass", desc: "자산 리밸런싱 가이드", role: "Backend", year: "2026", stack: ["Python", "FastAPI"] },
-  { no: "01", name: "Pulse", desc: "실시간 시세 위젯", role: "Backend", year: "2026", stack: ["Python", "Redis"] },
+  /* real (D:\expense_tracker) — actually Next.js 16 + FastAPI + MySQL, recorded
+     here because the Stack cell now carries "Full-stack" instead of the tech
+     list (owner's call). "AI API" is routes/expense_ai.py, which instantiates
+     an Anthropic client. No href: the backend repo is private and the Next.js
+     frontend its README points to (rhl0509/expense_frontend) does not exist on
+     GitHub. */
+  { no: "02", name: "가계부 Pro", desc: "개인·가구 공유 가계부", role: "Portfolio", year: "2026", stack: ["Full-stack", "AI API"] },
+  /* real (D:\crack), team project — MBC 2026 대보정보통신 선도교육 2조.
+     desc/stack describe the local state: the 싱크홀·SAM2 half is not in the
+     public repo, which was last pushed 2026-04-09. href deliberately omitted —
+     A-Eye-2026/crack is public, but it has no README and the contributor graph
+     reads rhl0509 2 of 25 commits. Linking it is the owner's call, not a
+     default. */
+  { no: "01", name: "crack", desc: "도로 균열·포트홀·싱크홀 탐지", role: "Team member", year: "2026", stack: ["Flask", "HTML", "SAM2"] },
 ];
 
-function Chevron() {
+/** Arrow, angled up-right rather than straight: ↗ is the established "leaves
+    this page" direction, while → reads as "next / continue here". */
+function ArrowIcon() {
   return (
-    <svg className="pf-chev" width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false" style={{ color: V.fg3 }}>
-      <path d="m9 18 6-6-6-6" />
+    <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+      <path d="M7 17 17 7" />
+      <path d="M8 7h9v9" />
     </svg>
   );
 }
@@ -239,14 +256,29 @@ const STYLE = `
 .pf-work-scroll:hover::-webkit-scrollbar-thumb { background: var(--scroll-thumb-hover); }
 
 /* Stack needs ~130px: "React · TypeScript" at 11px mono wraps below that, and a
-   wrapped chip list makes row heights uneven. Role gives up the width. */
-.pf-grid { display: grid; grid-template-columns: 64px 1fr 132px 132px 76px 24px; gap: 20px; align-items: center; }
+   wrapped chip list makes row heights uneven. Role gives up the width.
+   The last column is wider than the 32px button it holds on purpose: gap is
+   uniform across the grid, so the only way to push Link away from Year is to
+   pad its own column. The button is right-aligned, so the surplus lands on its
+   left — 60px reads as a ~48px gap after Year, against 20px everywhere else.
+   That distance is doing work: Link is the one interactive column. */
+.pf-grid { display: grid; grid-template-columns: 64px 1fr 132px 132px 76px 60px; gap: 20px; align-items: center; }
 
-.pf-row { padding: 16px 8px; border-bottom: 1px solid var(--line); border-radius: var(--radius-sm); text-decoration: none; color: inherit; }
-a.pf-row { cursor: pointer; }
-a.pf-row:hover { background: var(--panel); }
-.pf-chev { transition: transform var(--dur-fast) var(--ease-out); }
-a.pf-row:hover .pf-chev, a.pf-row:focus-visible .pf-chev { transform: translateX(3px); }
+.pf-row { padding: 16px 8px; border-bottom: 1px solid var(--line); border-radius: var(--radius-sm); color: inherit; }
+/* the row is never the link — only .pf-visit is. A button nested inside a
+   linked row would be interactive content inside an <a>: invalid HTML, and it
+   breaks keyboard order and AT announcement. */
+/* a.pf-visit, not .pf-visit: every row carries the button now, but only the ones
+   with a live link may light up — highlighting a dead row invites a click that
+   does nothing. (No backticks in this string: it is a template literal.) */
+.pf-row:hover:has(a.pf-visit) { background: var(--panel); }
+
+/* Visit button, on every row. The live one is an <a>; the href-less one is the
+   -off variant: same footprint, no hover, no cursor, no focus — it holds the
+   column's shape without pretending to be pressable. */
+.pf-visit { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex: none; border-radius: var(--radius-sm); border: 1px solid var(--lineStrong); color: var(--fg3); text-decoration: none; }
+a.pf-visit:hover { color: var(--ink); border-color: var(--ink); background: var(--surface); }
+.pf-visit-off { border-color: var(--line); color: var(--fg3); opacity: .38; cursor: default; }
 
 .pf-link { color: inherit; text-decoration: none; }
 /* dim via color, not opacity: color is in the transition set above, so this
@@ -258,11 +290,10 @@ a.pf-row:hover .pf-chev, a.pf-row:focus-visible .pf-chev { transform: translateX
 .pf-iconbtn:hover, .pf-social:hover { color: var(--ink); border-color: var(--ink); background: var(--panel); }
 
 /* one focus ring, offset varies by element */
-.pf-card :is(a.pf-row, .pf-link, .pf-iconbtn, .pf-social):focus-visible {
+.pf-card :is(.pf-visit, .pf-link, .pf-iconbtn, .pf-social):focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: var(--focus-offset, 2px);
 }
-a.pf-row { --focus-offset: -2px; }
 .pf-link { --focus-offset: 3px; }
 
 /* it's a <ul>: the resets live with the rest of its layout, not inline */
@@ -295,7 +326,7 @@ a.pf-row { --focus-offset: -2px; }
 @media (max-width: 1200px) {
   .pf-pad { padding: 36px 44px 40px; }
   .pf-photo { width: 280px; height: 300px; }
-  .pf-grid { grid-template-columns: 56px 1fr 126px 118px 70px 22px; gap: 16px; }
+  .pf-grid { grid-template-columns: 56px 1fr 126px 118px 70px 56px; gap: 16px; }
 }
 
 /* ── 2) ≤1024px · 태블릿 가로 ─────────────────────────────────── */
@@ -303,7 +334,7 @@ a.pf-row { --focus-offset: -2px; }
   .pf-pad { padding: 34px 38px 38px; }
   .pf-hero { gap: 36px; }
   .pf-photo { width: 248px; height: 272px; }
-  .pf-grid { grid-template-columns: 52px 1fr 120px 104px 64px 20px; gap: 14px; }
+  .pf-grid { grid-template-columns: 52px 1fr 120px 104px 64px 52px; gap: 14px; }
 }
 
 /* ── 3) ≤880px · 태블릿 세로 (히어로 세로 스택, 스택 열 숨김) ──── */
@@ -312,7 +343,7 @@ a.pf-row { --focus-offset: -2px; }
   /* square, not full-bleed: the portrait is 1:1, and a full-width letterbox
      crops it to a band across the eyes */
   .pf-photo { width: 240px; height: 240px; align-self: center; }
-  .pf-grid { grid-template-columns: 48px 1fr 140px 64px 20px; gap: 14px; }
+  .pf-grid { grid-template-columns: 48px 1fr 140px 64px 52px; gap: 14px; }
   .pf-col-stack { display: none; }
 }
 
@@ -320,9 +351,10 @@ a.pf-row { --focus-offset: -2px; }
 @media (max-width: 720px) {
   .pf-pad { padding: 28px 24px 32px; }
   .pf-photo { width: 220px; height: 220px; }
-  .pf-grid { grid-template-columns: 40px 1fr 64px 20px; gap: 12px; }
+  .pf-grid { grid-template-columns: 40px 1fr 64px 52px; gap: 12px; }
   .pf-col-role { display: none; }
   .pf-iconbtn { width: 44px; height: 44px; }   /* thumb target */
+  .pf-visit { width: 44px; height: 44px; }     /* thumb target */
 }
 
 /* ── 5) ≤560px · 휴대폰 (소셜 버튼 세로 풀폭) ────────────────────── */
@@ -340,7 +372,7 @@ a.pf-row { --focus-offset: -2px; }
 /* ── 6) ≤400px · 소형 휴대폰 ──────────────────────────────────── */
 @media (max-width: 400px) {
   .pf-pad { padding: 18px 14px 22px; }
-  .pf-grid { grid-template-columns: 34px 1fr 52px 18px; gap: 10px; }
+  .pf-grid { grid-template-columns: 34px 1fr 52px 48px; gap: 10px; }
 }
 
 /* ── 0a) ≥1440px · 대형 데스크톱 ─────────────────────────────── */
@@ -348,7 +380,7 @@ a.pf-row { --focus-offset: -2px; }
   .pf-card { width: min(1360px, 100%); }
   .pf-pad { padding: 48px 64px 52px; }
   .pf-photo { width: 320px; height: 340px; }
-  .pf-grid { grid-template-columns: 72px 1fr 148px 148px 84px 26px; gap: 24px; }
+  .pf-grid { grid-template-columns: 72px 1fr 148px 148px 84px 68px; gap: 24px; }
 }
 
 /* ── 0b) ≥1680px · 초대형 / 와이드 모니터 ─────────────────────── */
@@ -443,26 +475,28 @@ export default function Portfolio({
       <span style={{ background: V.hlBg, color: V.hlInk, padding: "0.02em 0.16em", borderRadius: "var(--radius-xs)", WebkitBoxDecorationBreak: "clone", boxDecorationBreak: "clone" }}>돌아가는</span> 시스템을 만듭니다.
     </>
   ),
-  intro = "AI는 만들 수 있는 사람이 많아졌습니다. 어려운 건 그게 매일의 업무 위에서 실제로 도는 상태, AX입니다. 모델 혼자 되는 일이 아니라 인프라와 서버, 프론트가 함께 받쳐야 하는 일이라, 그 전체를 풀스택으로 만듭니다.",
+  intro = "AI는 만들 수 있는 사람이 많아졌습니다. 어려운 건 그게 매일의 업무 위에서 실제로 도는 상태, AX입니다. 모델 혼자 되는 일이 아니라 인프라와 서버, 백엔드, 프론트가 함께 받쳐야 하는 일이라, 그 전체를 풀스택으로 만듭니다.",
   photoSrc = "/profile.webp",
   projects = PROJECTS,
-  availability = "2026 채용·프로젝트 문의 환영",
+  /* mirrored in public/og.svg's footer — change both, then `npm run og` */
+  availability = "2026 채용·프로젝트·협업·문의 환영",
   githubHref = "https://github.com/rhl0509",
   instagramHref = "https://instagram.com/hyeongrae_r",
   /* Ordered to trace the intro's own claim — AX first, then the 인프라·서버·프론트
-     that has to hold it up.
+     that has to hold it up: AI, server, data, front, platform.
      AX leads by choice and is the one chip that is not a technology: it names the
-     intro's claim rather than a tool. Everything after it is backed by code that
-     exists on disk — a badge nobody can produce a repo for is a liability in an
-     interview, not a keyword.
-     Dropped from the template list: PostgreSQL and AWS (zero usage anywhere —
-     this page's own badge was the only occurrence), Linux (a base image is not
-     the skill), Flask (real, but listing it beside FastAPI reads as neither one
-     deeply), React (Next.js is React — the word still shows up in the work
-     list's Stack column).
-     Wrapping is left alone: any count orphans a chip at some width, so the list
-     is chosen by what it claims, not by where it happens to break. */
-  stack = ["AX", "ML Pipeline", "Python", "FastAPI", "MySQL", "Next.js", "TypeScript", "Docker", "GitHub Actions"],
+     intro's claim rather than a tool.
+     Grep-backed on this drive: Python / FastAPI (erp, stock_tracker,
+     expense_tracker), Flask (crack + the public flask repos), MySQL (all four),
+     Next.js + TypeScript (erp 16.2.10, expense_tracker 16.2.7), ML Pipeline
+     (stock_tracker's scikit-learn retrain), GitHub Actions (erp, this repo).
+     Windows / Linux / AWS are the owner's claim and deliberately not grep-gated:
+     OS and cloud-console work leaves no dependency behind, so "no boto3" would
+     only have proved the Python SDK is unused — not that AWS is.
+     PostgreSQL stays out: zero usage, and unlike the above it is the kind of
+     thing that would leave a driver behind if it were used. React is out because
+     Next.js is React. Docker is out by request, though erp does ship one. */
+  stack = ["AX", "ML Pipeline", "Python", "FastAPI", "Flask", "MySQL", "Next.js", "TypeScript", "HTML", "CSS", "Windows", "Linux", "AWS", "Notion", "GitHub Actions"],
 }: PortfolioProps) {
   const [theme, setTheme] = useState<"light" | "dark">(getInitialTheme);
 
@@ -504,14 +538,6 @@ export default function Portfolio({
     });
 
   const monoLabel: CSSProperties = { fontFamily: MONO, fontSize: 11, letterSpacing: "0.06em", textTransform: "uppercase", color: V.fg3 };
-
-  // Year range derived from project data (e.g. "2026—2026" collapses to "2026").
-  const years = projects.map((p) => Number(p.year)).filter((y) => Number.isFinite(y));
-  const yearRange = years.length
-    ? Math.min(...years) === Math.max(...years)
-      ? String(Math.min(...years))
-      : `${Math.min(...years)}—${Math.max(...years)}`
-    : "";
 
   return (
     <div className="pf-card" data-theme={theme} style={{ background: V.surface, border: `1px solid ${V.cardBorder}`, borderRadius: "var(--radius-xl)", overflow: "hidden", boxShadow: V.cardShadow, fontFamily: "'Pretendard Variable', Pretendard, system-ui, sans-serif", WebkitFontSmoothing: "antialiased", color: V.ink }}>
@@ -561,14 +587,13 @@ export default function Portfolio({
 
         {/* selected work */}
         <section id="work" className="pf-anim" style={{ animationDelay: ".12s" }}>
-          <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 12 }}>
-            <h2 lang="en" style={{ margin: 0, fontSize: 20, fontWeight: 700, letterSpacing: "-0.02em" }}>Selected work</h2>
-            <span style={{ fontFamily: MONO, fontSize: 12, color: V.fg3 }}>{String(projects.length).padStart(2, "0")} projects{yearRange ? ` · ${yearRange}` : ""}</span>
-          </div>
+          {/* the flex row held a project counter on the right; with it gone the
+              heading is the only child and carries its own bottom margin. */}
+          <h2 lang="en" style={{ margin: "0 0 12px", fontSize: 20, fontWeight: 700, letterSpacing: "-0.02em" }}>Selected work</h2>
 
           {/* index header */}
           <div className="pf-grid" lang="en" style={{ padding: "0 8px 12px", borderBottom: `1px solid ${V.lineStrong}`, ...monoLabel }}>
-            <span>No.</span><span>Project</span><span className="pf-col-stack">Stack</span><span className="pf-col-role">Role</span><span style={{ textAlign: "right" }}>Year</span><span />
+            <span>No.</span><span>Project</span><span className="pf-col-stack">Stack</span><span className="pf-col-role">Role</span><span style={{ textAlign: "center" }}>Year</span><span style={{ textAlign: "right" }}>Link</span>
           </div>
 
           {/* scrolling rows */}
@@ -585,17 +610,38 @@ export default function Portfolio({
                     {p.stack.map((s) => <span key={s}>{s}</span>)}
                   </span>
                   <span className="pf-col-role" style={{ fontSize: 14, color: V.fg2 }}>{p.role}</span>
-                  <span style={{ fontFamily: MONO, fontSize: 14, color: V.fg2, textAlign: "right" }}>{p.year}</span>
-                  <span style={{ display: "flex", justifyContent: "flex-end" }}>{p.href ? <Chevron /> : null}</span>
+                  {/* centred, and the "Year" header above it must match. Both
+                      were right-aligned, which lined their right edges up
+                      exactly — but "YEAR" (29px) and "2026" (34px) are different
+                      widths, so only that one edge touched and the pair read as
+                      crooked. Centring only one of them would widen the gap, not
+                      close it. Safe here because every year is four digits; if a
+                      value ever isn't, right-align both instead — mono digits
+                      are for column alignment, not centring. */}
+                  <span style={{ fontFamily: MONO, fontSize: 14, color: V.fg2, textAlign: "center" }}>{p.year}</span>
+                  {/* Link column. Only this button is interactive — the row is
+                      never a link, so nothing nests inside anything.
+                      Every row shows the button so the column reads as a column,
+                      but a row with no href gets the dimmed, inert variant: a
+                      live-looking control that goes nowhere is a broken promise.
+                      It is aria-hidden because there is nothing to announce —
+                      a screen reader meets the same "no link here" as a sighted
+                      visitor, just without a phantom control in the tab order. */}
+                  <span style={{ display: "flex", justifyContent: "flex-end" }}>
+                    {p.href ? (
+                      <a className="pf-visit" href={p.href} target="_blank" rel="noopener noreferrer">
+                        <ArrowIcon />
+                        <span className="pf-sr">{p.name} 링크 열기 (새 창)</span>
+                      </a>
+                    ) : (
+                      <span className="pf-visit pf-visit-off" aria-hidden="true">
+                        <ArrowIcon />
+                      </span>
+                    )}
+                  </span>
                 </>
               );
-              // Only render a link when there is an actual destination; rows
-              // without href are plain (no pointer, not focusable).
-              return p.href ? (
-                <a key={p.no} className="pf-row pf-grid" href={p.href} aria-label={`${p.name} 자세히 보기`}>
-                  {cells}
-                </a>
-              ) : (
+              return (
                 <div key={p.no} className="pf-row pf-grid">
                   {cells}
                 </div>
