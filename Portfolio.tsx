@@ -48,14 +48,18 @@ export interface Project {
   href?: string;
 }
 
-/* Slots 02 and 01 are real; 05–03 are still the template's placeholder cast,
-   being replaced slot by slot. None of 05–03 exists, so none can carry an href.
+/* Slots 03–01 are real; 05 and 04 are still the template's placeholder cast,
+   being replaced slot by slot. Neither exists, so neither can carry an href.
    `no` is display text, not an index — deleting from the top keeps 05…01
    contiguous, so nothing renumbers. Delete from the middle and it will. */
 export const PROJECTS: Project[] = [
   { no: "05", name: "Meridian Terminal", desc: "기관용 트레이딩 워크스페이스", role: "Full-stack", year: "2026", stack: ["Next.js", "MySQL"] },
   { no: "04", name: "Onboarding", desc: "핀테크 가입 흐름 재설계", role: "Frontend", year: "2026", stack: ["React", "TypeScript"] },
-  { no: "03", name: "Numeral", desc: "숫자 중심 타입 시스템", role: "Frontend", year: "2026", stack: ["TypeScript"] },
+  /* real (D:\stock_tracker) — FastAPI + React client + MySQL, and the 머신러닝
+     half is XGBoost_v2/ (collect → predict → backtest → daily_recommend) plus
+     kiwoom_client for the broker feed. Year from git: first commits 2026-06.
+     No href: D:\stock_git is the deploy repo and it is private. */
+  { no: "03", name: "stock", desc: "주식 수집·예측·백테스트 파이프라인", role: "Portfolio", year: "2026", stack: ["Full-stack", "머신러닝"] },
   /* real (D:\expense_tracker) — actually Next.js 16 + FastAPI + MySQL, recorded
      here because the Stack cell now carries "Full-stack" instead of the tech
      list (owner's call). "AI API" is routes/expense_ai.py, which instantiates
