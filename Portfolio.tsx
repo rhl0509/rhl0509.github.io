@@ -347,14 +347,12 @@ a.pf-visit:hover { color: var(--ink); border-color: var(--ink); background: var(
    query, and CSS can only outrank them with !important — which is why this
    file used to carry fifteen of them. */
 .pf-hero { display: flex; align-items: center; gap: 48px; margin-bottom: 44px; }
-/* Circular, not a rounded rect: the portrait is a circular-vignette ID photo
-   (white glow fading to black at the square's corners). A rectangular frame
-   showed those dark corners as a grey box against the white card. A circle clips
-   them off entirely — and works in both themes: on light the white glow blends
-   into the white card, on dark the black corners merge into the dark card.
-   That is why every breakpoint below keeps this box square — an ellipse would
-   crop the face off-centre. */
-.pf-photo { width: 300px; height: 300px; flex: none; border-radius: 50%; overflow: hidden; background: var(--panel); border: 1px solid var(--lineStrong); display: flex; align-items: center; justify-content: center; }
+/* Rounded rect. This works because the portrait is a flat white-background ID
+   photo: on the white card its edges just dissolve, and the border does the
+   framing. (An earlier portrait had a circular black vignette whose square
+   corners read as a grey box here — that one needed a circle to hide them. This
+   image doesn't, so the frame is back to matching every other card.) */
+.pf-photo { width: 300px; height: 316px; flex: none; border-radius: var(--radius-lg); overflow: hidden; background: var(--panel); border: 1px solid var(--lineStrong); display: flex; align-items: center; justify-content: center; }
 .pf-social-row { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
 
 /* one rule replaces an eight-step font-size ladder; max deviation ~2px */
@@ -363,7 +361,7 @@ a.pf-visit:hover { color: var(--ink); border-color: var(--ink); background: var(
 /* ── 1) ≤1200px · 좁은 데스크톱/노트북 ───────────────────────── */
 @media (max-width: 1200px) {
   .pf-pad { padding: 36px 44px 40px; }
-  .pf-photo { width: 280px; height: 280px; }
+  .pf-photo { width: 280px; height: 300px; }
   .pf-grid { grid-template-columns: 56px 1fr 126px 118px 70px 56px; gap: 16px; }
 }
 
@@ -371,15 +369,15 @@ a.pf-visit:hover { color: var(--ink); border-color: var(--ink); background: var(
 @media (max-width: 1024px) {
   .pf-pad { padding: 34px 38px 38px; }
   .pf-hero { gap: 36px; }
-  .pf-photo { width: 248px; height: 248px; }
+  .pf-photo { width: 248px; height: 272px; }
   .pf-grid { grid-template-columns: 52px 1fr 120px 104px 64px 52px; gap: 14px; }
 }
 
 /* ── 3) ≤880px · 태블릿 세로 (히어로 세로 스택, 스택 열 숨김) ──── */
 @media (max-width: 880px) {
   .pf-hero { flex-direction: column-reverse; align-items: stretch; gap: 24px; }
-  /* the hero stacks here; pin the circle to a fixed size and centre it rather
-     than letting it stretch to the column width (which would make a huge oval). */
+  /* square, not full-bleed: the portrait is 1:1, and a full-width letterbox
+     crops it to a band across the eyes */
   .pf-photo { width: 240px; height: 240px; align-self: center; }
   .pf-grid { grid-template-columns: 48px 1fr 140px 64px 52px; gap: 14px; }
   .pf-col-stack { display: none; }
@@ -417,7 +415,7 @@ a.pf-visit:hover { color: var(--ink); border-color: var(--ink); background: var(
 @media (min-width: 1440px) {
   .pf-card { width: min(1360px, 100%); }
   .pf-pad { padding: 48px 64px 52px; }
-  .pf-photo { width: 320px; height: 320px; }
+  .pf-photo { width: 320px; height: 340px; }
   .pf-grid { grid-template-columns: 72px 1fr 148px 148px 84px 68px; gap: 24px; }
 }
 
@@ -425,7 +423,7 @@ a.pf-visit:hover { color: var(--ink); border-color: var(--ink); background: var(
 @media (min-width: 1680px) {
   .pf-card { width: min(1480px, 100%); }
   .pf-pad { padding: 52px 72px 56px; }
-  .pf-photo { width: 344px; height: 344px; }
+  .pf-photo { width: 344px; height: 364px; }
 }
 
 /* ── 0c) 초고해상도 (FHD~8K) · 카드 전체를 zoom으로 비례 확대 ──────
