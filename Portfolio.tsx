@@ -63,12 +63,12 @@ export const PROJECTS: Project[] = [
      stack is from the backend README: FastAPI 0.115 + SQLAlchemy 2.0 async +
      aiomysql, JWT (pyjwt) + bcrypt, a Next.js front on :3000, an AI server on
      :8001; db/schema holds ai_db / board_db / chat_db / member_db.
-     KNOWN, two layers deep: the repo is private (404 to visitors, as with 04),
-     AND this URL lands on `main`, which holds one "Initial commit" and nothing
-     else — the work lives on `develop` (apps/, db/, docs/; 12 commits). So even
-     a reader with access sees an empty repo. Both facts were verified and the
-     owner chose this URL anyway; .../tree/develop is the fix if that changes. */
-  { no: "05", name: "Road A Eye", desc: "고속도로 CCTV 기반 위험차량 감지·관제", role: "Team Lead", year: "2026", stack: ["Next.js", "FastAPI", "JWT", "DB 이중화", "ITS API"], href: "https://github.com/RoadAeye/Road_A_Eye" },
+     KNOWN: the repo is private, so this 404s for anonymous visitors (as with 04).
+     The URL points at /tree/develop on purpose: `main` holds only an "Initial
+     commit", while the actual app lives on `develop` (apps/, db/, docs/; 12
+     commits) — so a reader who does have access lands on the real work, not an
+     empty repo. Making the repo public is what fixes the visitor 404. */
+  { no: "05", name: "Road A Eye", desc: "고속도로 CCTV 기반 위험차량 감지·관제", role: "Team Lead", year: "2026", stack: ["Next.js", "FastAPI", "JWT", "DB 이중화", "ITS API"], href: "https://github.com/RoadAeye/Road_A_Eye/tree/develop" },
   /* real (D:\auto_agent). 62종 is counted, not quoted: 62 of the 63 top-level
      .md files carry a `name:` frontmatter (design-agents.md is the odd one),
      which matches the repo README's own figure.
