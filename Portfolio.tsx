@@ -401,7 +401,7 @@ a.pf-visit:hover { color: var(--ink); border-color: var(--ink); background: var(
   .pf-social-row { flex-direction: column; align-items: stretch; }
   .pf-social { justify-content: center; height: 44px; }
   /* the <br> in the headline is load-bearing: it stands in for the only space
-     between "아니라," and "AI로". Hiding it welds them into one token that
+     between "배포까지," and "직접". Hiding it welds them into one token that
      word-break: keep-all refuses to split, and the card overflows. */
 }
 
@@ -507,8 +507,8 @@ export default function Portfolio({
   tagline = "AI Engineering · Full-stack",
   headline = (
     <>
-      AI를 붙이는 게 아니라,<br />AI로{" "}
-      <span style={{ background: V.hlBg, color: V.hlInk, padding: "0.02em 0.16em", borderRadius: "var(--radius-xs)", WebkitBoxDecorationBreak: "clone", boxDecorationBreak: "clone" }}>돌아가는</span> 시스템을 만듭니다.
+      데이터부터 배포까지,<br />직접{" "}
+      <span style={{ background: V.hlBg, color: V.hlInk, padding: "0.02em 0.16em", borderRadius: "var(--radius-xs)", WebkitBoxDecorationBreak: "clone", boxDecorationBreak: "clone" }}>설계하고 구현</span>합니다.
     </>
   ),
   intro = "AI는 만들 수 있는 사람이 많아졌습니다. 어려운 건 그게 매일의 업무 위에서 실제로 도는 상태, AX입니다. 모델 혼자 되는 일이 아니라 인프라와 서버, 백엔드, 프론트가 함께 받쳐야 하는 일이라, 그 전체를 풀스택으로 만듭니다.",

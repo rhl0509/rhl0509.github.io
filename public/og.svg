@@ -8,18 +8,19 @@
   <!-- eyebrow -->
   <text x="80" y="300" font-family="'JetBrains Mono', monospace" font-size="24" letter-spacing="4" fill="#6B7280">AI ENGINEERING · FULL-STACK</text>
   <!-- headline — mirrors the site's h1 copy (Portfolio.tsx `headline` prop).
-       font-size is 78, not the 84 this card used with the old, shorter headline:
-       at 84 the second line ends at x=1148 and crowds the 1200 canvas edge.
-       The 93px baseline gap keeps the site's 1.19 line-height ratio. -->
-  <text x="78" y="392" font-family="'Pretendard', system-ui, sans-serif" font-size="78" font-weight="700" letter-spacing="-2" fill="#0A0B0D">AI를 붙이는 게 아니라,</text>
-  <!-- highlight box mirrors the site's <span> marker on 돌아가는 (--hl-bg / --hl-ink).
-       SVG can't size a box to a text run, so these numbers are measured, not
-       guessed: they are the tspan's rendered getBBox (x=232.1 y=411 w=262.2
-       h=93 under the real CDN fonts) expanded by the site's span padding
-       (0.02em 0.16em at 78px = 1.56 / 12.48). Re-measure with a headless
-       render if the headline, font, or size changes — eyeballing them drifts. -->
-  <rect x="219.6" y="409.4" width="287.2" height="96.1" rx="5" fill="#9CA3AF"/>
-  <text x="78" y="485" font-family="'Pretendard', system-ui, sans-serif" font-size="78" font-weight="700" letter-spacing="-2" fill="#0A0B0D">AI로 <tspan>돌아가는</tspan> 시스템을 만듭니다.</text>
+       font-size 78 keeps the second line clear of the 1200 canvas edge
+       (its right edge measures ~849). The 93px baseline gap keeps the site's
+       1.19 line-height ratio. -->
+  <text x="78" y="392" font-family="'Pretendard', system-ui, sans-serif" font-size="78" font-weight="700" letter-spacing="-2" fill="#0A0B0D">데이터부터 배포까지,</text>
+  <!-- highlight box mirrors the site's <span> marker on 설계하고 구현 (--hl-bg /
+       --hl-ink). SVG can't size a box to a text run, so these numbers are
+       measured, not guessed: the tspan's rendered getBBox (x=224.8 y=411
+       w=408.5 h=93 under the real CDN fonts) expanded by the site's span
+       padding (0.02em 0.16em at 78px = 1.56 / 12.48). Re-measure with a
+       headless render if the headline, font, or size changes — eyeballing
+       them drifts. -->
+  <rect x="212.3" y="409.4" width="433.4" height="96.1" rx="5" fill="#9CA3AF"/>
+  <text x="78" y="485" font-family="'Pretendard', system-ui, sans-serif" font-size="78" font-weight="700" letter-spacing="-2" fill="#0A0B0D">직접 <tspan>설계하고 구현</tspan>합니다.</text>
   <!-- footer -->
   <circle cx="90" cy="560" r="6" fill="#84CC16"/>
   <text x="106" y="567" font-family="'Pretendard', system-ui, sans-serif" font-size="22" fill="#4B5563">2026 채용·프로젝트·협업·문의 환영 · rhl9509@naver.com</text>
