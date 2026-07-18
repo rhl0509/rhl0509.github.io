@@ -466,9 +466,9 @@ export interface PortfolioProps {
   /** intro paragraph */
   intro?: string;
   /** Portrait image URL. Served from public/, so the path is root-relative.
-      Source of truth is img/ — public/profile.webp is a 700px derivative.
-      Re-encoding the source PNG as PNG is a trap: it is 8-bit palette art, and
-      a 24-bit re-encode lands at ~675KB, larger than the 1254px original. */
+      Source of truth is img/profile-source.png (a 1254² flat-white-background ID
+      photo); public/profile.webp is its 700px webp derivative — a straight
+      downscale, no crop, since the source is already square and centred. */
   photoSrc?: string;
   projects?: Project[];
   /** footer availability label */
