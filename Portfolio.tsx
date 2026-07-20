@@ -515,7 +515,7 @@ export default function Portfolio({
       <span style={{ background: V.hlBg, color: V.hlInk, padding: "0.02em 0.16em", borderRadius: "var(--radius-xs)", WebkitBoxDecorationBreak: "clone", boxDecorationBreak: "clone" }}>구조</span>를 설계하는 AI&nbsp;엔지니어로.
     </>
   ),
-  intro = "바이브 코딩으로도 AI는 만들어집니다. 하지만 매일의 업무 위에서 실제로 도는 상태, AX는 구조 없이 안 됩니다. 인프라와 서버, 백엔드, 프론트가 함께 받쳐야 하는 일이라, 그 구조 전체를 풀스택으로 만듭니다.",
+  intro = "보여주는 AI는 바이브로 충분합니다. 일하는 AI는 구조가 필요합니다. 매일의 업무 위에서 실제로 도는 상태, AX — 그걸 받치는 인프라부터 프론트까지, 풀스택으로 만듭니다.",
   photoSrc = "/profile.webp",
   projects = PROJECTS,
   /* mirrored in public/og.svg's footer — change both, then `npm run og` */
