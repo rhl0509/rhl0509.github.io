@@ -401,8 +401,12 @@ a.pf-visit:hover { color: var(--ink); border-color: var(--ink); background: var(
   .pf-social-row { flex-direction: column; align-items: stretch; }
   .pf-social { justify-content: center; height: 44px; }
   /* the <br> in the headline is load-bearing: it stands in for the only space
-     between "배포까지," and "직접". Hiding it welds them into one token that
-     word-break: keep-all refuses to split, and the card overflows. */
+     between "개발자에서," and "바이브가". Hiding it welds them into one token
+     that word-break: keep-all refuses to split, and the card overflows.
+     "AI 엔지니어로." is glued with &nbsp; instead of a second <br>: a hard
+     break there fits wide screens but strands "설계하는" alone on tablets —
+     the nbsp lets each width break at whichever space it needs while never
+     splitting AI from 엔지니어로. */
 }
 
 /* ── 6) ≤400px · 소형 휴대폰 ──────────────────────────────────── */
@@ -508,7 +512,7 @@ export default function Portfolio({
   headline = (
     <>
       코드를 짜던 개발자에서,<br />바이브가 아닌{" "}
-      <span style={{ background: V.hlBg, color: V.hlInk, padding: "0.02em 0.16em", borderRadius: "var(--radius-xs)", WebkitBoxDecorationBreak: "clone", boxDecorationBreak: "clone" }}>구조</span>를 설계하는<br />AI 엔지니어로.
+      <span style={{ background: V.hlBg, color: V.hlInk, padding: "0.02em 0.16em", borderRadius: "var(--radius-xs)", WebkitBoxDecorationBreak: "clone", boxDecorationBreak: "clone" }}>구조</span>를 설계하는 AI&nbsp;엔지니어로.
     </>
   ),
   intro = "AI는 만들 수 있는 사람이 많아졌습니다. 어려운 건 그게 매일의 업무 위에서 실제로 도는 상태, AX입니다. 모델 혼자 되는 일이 아니라 인프라와 서버, 백엔드, 프론트가 함께 받쳐야 하는 일이라, 그 전체를 풀스택으로 만듭니다.",
