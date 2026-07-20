@@ -401,12 +401,10 @@ a.pf-visit:hover { color: var(--ink); border-color: var(--ink); background: var(
   .pf-social-row { flex-direction: column; align-items: stretch; }
   .pf-social { justify-content: center; height: 44px; }
   /* the <br> in the headline is load-bearing: it stands in for the only space
-     between "개발자에서," and "바이브가". Hiding it welds them into one token
+     between "개발자에서," and "구조를". Hiding it welds them into one token
      that word-break: keep-all refuses to split, and the card overflows.
-     "AI 엔지니어로." is glued with &nbsp; instead of a second <br>: a hard
-     break there fits wide screens but strands "설계하는" alone on tablets —
-     the nbsp lets each width break at whichever space it needs while never
-     splitting AI from 엔지니어로. */
+     "AI 엔지니어로." is glued with &nbsp; so no width ever splits AI from
+     엔지니어로 — narrow screens break before AI instead. */
 }
 
 /* ── 6) ≤400px · 소형 휴대폰 ──────────────────────────────────── */
@@ -511,7 +509,7 @@ export default function Portfolio({
   tagline = "AI Engineering · Full-stack",
   headline = (
     <>
-      코드를 짜던 개발자에서,<br />바이브가 아닌{" "}
+      코드를 짜던 개발자에서,<br />
       <span style={{ background: V.hlBg, color: V.hlInk, padding: "0.02em 0.16em", borderRadius: "var(--radius-xs)", WebkitBoxDecorationBreak: "clone", boxDecorationBreak: "clone" }}>구조</span>를 설계하는 AI&nbsp;엔지니어로.
     </>
   ),
