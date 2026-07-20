@@ -467,8 +467,8 @@ export interface PortfolioProps {
   tagline?: string;
   /** headline; supports a highlighted span */
   headline?: ReactNode;
-  /** intro paragraph */
-  intro?: string;
+  /** intro paragraph; supports explicit line breaks */
+  intro?: ReactNode;
   /** Portrait image URL. Served from public/, so the path is root-relative.
       Source of truth is img/profile-source.png (a 1254² flat-white-background ID
       photo); public/profile.webp is its 700px webp derivative — a straight
@@ -515,7 +515,11 @@ export default function Portfolio({
       <span style={{ background: V.hlBg, color: V.hlInk, padding: "0.02em 0.16em", borderRadius: "var(--radius-xs)", WebkitBoxDecorationBreak: "clone", boxDecorationBreak: "clone" }}>구조</span>를 설계하는 AI&nbsp;엔지니어로.
     </>
   ),
-  intro = "보여주는 AI는 바이브로 충분합니다. 일하는 AI는 구조가 필요합니다. 매일의 업무 위에서 실제로 도는 상태, AX — 그걸 받치는 인프라부터 프론트까지, 풀스택으로 만듭니다.",
+  intro = (
+    <>
+      보여주는 AI는 바이브로 충분합니다. 일하는 AI는 구조가 필요합니다.<br />매일의 업무 위에서 실제로 도는 상태, AX. 그걸 받치는 인프라부터 프론트까지, 풀스택으로 만듭니다.
+    </>
+  ),
   photoSrc = "/profile.webp",
   projects = PROJECTS,
   /* mirrored in public/og.svg's footer — change both, then `npm run og` */
