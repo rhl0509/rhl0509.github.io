@@ -43,6 +43,13 @@ export interface Project {
   year: string;
   /** headline technologies, 2–3 max before the column wraps */
   stack: string[];
+  /** Row thumbnail — a screenshot of the thing itself, served from public/ so
+      the path is root-relative (convention: /thumbs/<slug>.webp, 16:11, ~320px
+      wide is plenty since the cell renders at 64px). Optional: a project without
+      a shot gets the inert frame instead, so the column keeps its shape.
+      Point this at a file that does not exist and the row shows a broken image,
+      not the placeholder — the fallback is "no thumb set", not "thumb failed". */
+  thumb?: string;
   /** Case-study or repo URL. Set it and the row's Link column grows a button
       that opens it in a new tab; leave it off and that cell stays empty. */
   href?: string;
@@ -67,8 +74,11 @@ export const PROJECTS: Project[] = [
      The URL points at /tree/develop on purpose: `main` holds only an "Initial
      commit", while the actual app lives on `develop` (apps/, db/, docs/; 12
      commits) — so a reader who does have access lands on the real work, not an
-     empty repo. Making the repo public is what fixes the visitor 404. */
-  { no: "05", name: "Road A Eye", desc: "고속도로 CCTV 기반 위험차량 감지·관제", role: "Team Lead", year: "2026", stack: ["Next.js", "FastAPI", "JWT", "DB 이중화", "ITS API"], href: "https://github.com/RoadAeye/Road_A_Eye/tree/develop" },
+     empty repo. Making the repo public is what fixes the visitor 404.
+     thumb: the team's A EYE wordmark. It is 293x162 on an opaque white ground, so
+     it is letterboxed onto white with a 10% margin, not centre-cropped — cropping
+     a wordmark to 16:11 eats the A and the trailing E. */
+  { no: "05", name: "Road A Eye", desc: "고속도로 CCTV 기반 위험차량 감지·관제", role: "Team Lead", year: "2026", stack: ["Next.js", "FastAPI", "JWT", "DB 이중화", "ITS API"], href: "https://github.com/RoadAeye/Road_A_Eye/tree/develop", thumb: "/thumbs/road-a-eye.webp" },
   /* real (D:\auto_agent). 62종 is counted, not quoted: 62 of the 63 top-level
      .md files carry a `name:` frontmatter (design-agents.md is the odd one),
      which matches the repo README's own figure.
@@ -99,8 +109,12 @@ export const PROJECTS: Project[] = [
      public repo, which was last pushed 2026-04-09. href deliberately omitted —
      A-Eye-2026/crack is public, but it has no README and the contributor graph
      reads rhl0509 2 of 25 commits. Linking it is the owner's call, not a
-     default. */
-  { no: "01", name: "crack", desc: "도로 균열·포트홀·싱크홀 탐지", role: "Team member", year: "2026", stack: ["Flask", "HTML", "SAM2"] },
+     default.
+     thumb: the app's own PWA icon (crack/static/icons/icon-512.png), centre-cropped
+     to 16:11 — a mark, not a screenshot, but it is the project's real asset rather
+     than something drawn for this page. The crop keeps the wordmark and the bolt
+     whole; the diagonal runs corner to corner either way, so it still full-bleeds. */
+  { no: "01", name: "crack", desc: "도로 균열·포트홀·싱크홀 탐지", role: "Team member", year: "2026", stack: ["Flask", "HTML", "SAM2"], thumb: "/thumbs/crack.webp" },
 ];
 
 /** Arrow, angled up-right rather than straight: ↗ is the established "leaves
@@ -116,6 +130,29 @@ function ArrowIcon() {
 
 function Dot() {
   return <span style={{ width: 7, height: 7, borderRadius: 999, background: V.signal, flex: "none" }} aria-hidden="true" />;
+}
+
+/** Stand-in glyph for a row that has no screenshot yet. */
+function ImageIcon() {
+  return (
+    <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <circle cx="8.5" cy="10" r="1.5" />
+      <path d="m21 16-4.5-4.5L9 19" />
+    </svg>
+  );
+}
+
+/** Row thumbnail. alt is empty on purpose: the project name sits in the very
+    next cell, so naming the image would make a screen reader read the row's
+    title twice. The frame is the same panel + hairline as .pf-photo, so an
+    empty cell reads as "no shot yet" rather than as a hole in the grid. */
+function Thumb({ src }: { src?: string }) {
+  return (
+    <span className={src ? "pf-col-thumb pf-thumb" : "pf-col-thumb pf-thumb pf-thumb-off"} aria-hidden={src ? undefined : true}>
+      {src ? <img src={src} alt="" loading="lazy" decoding="async" /> : <ImageIcon />}
+    </span>
+  );
 }
 
 function GitHubIcon() {
@@ -293,7 +330,16 @@ const STYLE = `
    pad its own column. The button is right-aligned, so the surplus lands on its
    left — 60px reads as a ~48px gap after Year, against 20px everywhere else.
    That distance is doing work: Link is the one interactive column. */
-.pf-grid { display: grid; grid-template-columns: 64px 1fr 132px 132px 76px 60px; gap: 20px; align-items: center; }
+.pf-grid { display: grid; grid-template-columns: 64px 64px 1fr 132px 132px 76px 60px; gap: 20px; align-items: center; }
+
+/* Shot column. Sized by aspect-ratio off the track width, never by a fixed
+   height: at 64px wide that lands on 44px tall, which is what the name+desc
+   block already measures — so the column costs the rows no height. Change the
+   ratio and every breakpoint follows without a second number to keep in step. */
+.pf-thumb { display: flex; align-items: center; justify-content: center; width: 100%; aspect-ratio: 16 / 11; border-radius: var(--radius-sm); overflow: hidden; background: var(--panel); border: 1px solid var(--line); color: var(--fg3); }
+.pf-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* dimmed, not hidden — an empty frame holds the column, a missing one ruins it */
+.pf-thumb-off { opacity: .45; }
 
 .pf-row { padding: 16px 8px; border-bottom: 1px solid var(--line); border-radius: var(--radius-sm); color: inherit; }
 /* the row is never the link — only .pf-visit is. A button nested inside a
@@ -362,7 +408,7 @@ a.pf-visit:hover { color: var(--ink); border-color: var(--ink); background: var(
 @media (max-width: 1200px) {
   .pf-pad { padding: 36px 44px 40px; }
   .pf-photo { width: 280px; height: 300px; }
-  .pf-grid { grid-template-columns: 56px 1fr 126px 118px 70px 56px; gap: 16px; }
+  .pf-grid { grid-template-columns: 56px 60px 1fr 126px 118px 70px 56px; gap: 16px; }
 }
 
 /* ── 2) ≤1024px · 태블릿 가로 ─────────────────────────────────── */
@@ -370,7 +416,7 @@ a.pf-visit:hover { color: var(--ink); border-color: var(--ink); background: var(
   .pf-pad { padding: 34px 38px 38px; }
   .pf-hero { gap: 36px; }
   .pf-photo { width: 248px; height: 272px; }
-  .pf-grid { grid-template-columns: 52px 1fr 120px 104px 64px 52px; gap: 14px; }
+  .pf-grid { grid-template-columns: 52px 56px 1fr 120px 104px 64px 52px; gap: 14px; }
 }
 
 /* ── 3) ≤880px · 태블릿 세로 (히어로 세로 스택, 스택 열 숨김) ──── */
@@ -379,7 +425,7 @@ a.pf-visit:hover { color: var(--ink); border-color: var(--ink); background: var(
   /* square, not full-bleed: the portrait is 1:1, and a full-width letterbox
      crops it to a band across the eyes */
   .pf-photo { width: 240px; height: 240px; align-self: center; }
-  .pf-grid { grid-template-columns: 48px 1fr 140px 64px 52px; gap: 14px; }
+  .pf-grid { grid-template-columns: 48px 52px 1fr 140px 64px 52px; gap: 14px; }
   .pf-col-stack { display: none; }
 }
 
@@ -387,7 +433,7 @@ a.pf-visit:hover { color: var(--ink); border-color: var(--ink); background: var(
 @media (max-width: 720px) {
   .pf-pad { padding: 28px 24px 32px; }
   .pf-photo { width: 220px; height: 220px; }
-  .pf-grid { grid-template-columns: 40px 1fr 64px 52px; gap: 12px; }
+  .pf-grid { grid-template-columns: 40px 44px 1fr 64px 52px; gap: 12px; }
   .pf-col-role { display: none; }
   .pf-iconbtn { width: 44px; height: 44px; }   /* thumb target */
   .pf-visit { width: 44px; height: 44px; }     /* thumb target */
@@ -411,6 +457,11 @@ a.pf-visit:hover { color: var(--ink); border-color: var(--ink); background: var(
 @media (max-width: 400px) {
   .pf-pad { padding: 18px 14px 22px; }
   .pf-grid { grid-template-columns: 34px 1fr 52px 48px; gap: 10px; }
+  /* the only breakpoint that drops the shot: below this the frame would render
+     ~28px wide, which is a smudge rather than a preview, and the row needs the
+     width for the project name. Declared after .pf-thumb so it outranks its
+     display: flex on equal specificity. */
+  .pf-col-thumb { display: none; }
 }
 
 /* ── 0a) ≥1440px · 대형 데스크톱 ─────────────────────────────── */
@@ -418,7 +469,7 @@ a.pf-visit:hover { color: var(--ink); border-color: var(--ink); background: var(
   .pf-card { width: min(1360px, 100%); }
   .pf-pad { padding: 48px 64px 52px; }
   .pf-photo { width: 320px; height: 340px; }
-  .pf-grid { grid-template-columns: 72px 1fr 148px 148px 84px 68px; gap: 24px; }
+  .pf-grid { grid-template-columns: 72px 72px 1fr 148px 148px 84px 68px; gap: 24px; }
 }
 
 /* ── 0b) ≥1680px · 초대형 / 와이드 모니터 ─────────────────────── */
@@ -635,7 +686,7 @@ export default function Portfolio({
 
           {/* index header */}
           <div className="pf-grid" lang="en" style={{ padding: "0 8px 12px", borderBottom: `1px solid ${V.lineStrong}`, ...monoLabel }}>
-            <span>No.</span><span>Project</span><span className="pf-col-stack">Stack</span><span className="pf-col-role">Role</span><span style={{ textAlign: "center" }}>Year</span><span style={{ textAlign: "right" }}>Link</span>
+            <span>No.</span><span className="pf-col-thumb">Shot</span><span>Project</span><span className="pf-col-stack">Stack</span><span className="pf-col-role">Role</span><span style={{ textAlign: "center" }}>Year</span><span style={{ textAlign: "right" }}>Link</span>
           </div>
 
           {/* scrolling rows */}
@@ -644,6 +695,7 @@ export default function Portfolio({
               const cells = (
                 <>
                   <span style={{ fontFamily: MONO, fontSize: 14, color: V.fg3 }}>{p.no}</span>
+                  <Thumb src={p.thumb} />
                   <div>
                     <div style={{ fontSize: 19, fontWeight: 600 }}>{p.name}</div>
                     <div style={{ fontSize: 14, color: V.fg3, marginTop: 4 }}>{p.desc}</div>
