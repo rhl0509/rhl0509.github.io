@@ -102,8 +102,14 @@ export const PROJECTS: Project[] = [
      list (owner's call). "AI API" is routes/expense_ai.py, which instantiates
      an Anthropic client. No href: the backend repo is private and the Next.js
      frontend its README points to (rhl0509/expense_frontend) does not exist on
-     GitHub. */
-  { no: "02", name: "AI 가계부", desc: "AI를 활용한 개인·가구 공유 가계부", role: "Portfolio", year: "2026", stack: ["Full-stack", "AI API"] },
+     GitHub.
+     thumb: the app icon from expense_tracker. The source is a 1024² PNG whose
+     mark occupies only the middle 723×731 — the rest is transparent, so it is
+     trimmed to that content box first; without the trim the empty alpha border
+     reads as padding and the icon renders tiny at 64px. From there it is
+     stretched to 16:11 rather than letterboxed — filling the cell edge to edge
+     is the owner's call, taken knowing the square art widens by ~47%. */
+  { no: "02", name: "AI 가계부", desc: "AI를 활용한 개인·가구 공유 가계부", role: "Portfolio", year: "2026", stack: ["Full-stack", "AI API"], thumb: "/thumbs/expense-tracker.webp" },
   /* real (D:\crack), team project — MBC 2026 대보정보통신 선도교육 2조.
      desc/stack describe the local state: the 싱크홀·SAM2 half is not in the
      public repo, which was last pushed 2026-04-09. href deliberately omitted —
