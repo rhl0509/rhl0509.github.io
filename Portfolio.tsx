@@ -89,11 +89,11 @@ export const PROJECTS: Project[] = [
      owner's explicit decision, made after that was verified; do not "fix" it by
      deleting the href. Flipping the repo to public is what makes it work, and
      the repo already reads as if it were (its README carries a git clone URL).
-     thumb: the project's own AX-agent logo (D:\auto_agent\img.png), a 1254²
-     mascot+wordmark on a cream ground. Centre-cropped to 16:11 rather than
-     letterboxed — the mark's content sits in the middle 708px of height, so the
-     crop only eats the surplus top/bottom cream and leaves the whole mark and
-     the "AX-AGENT" wordmark uncut. */
+     thumb: the project's own AX-agent mascot (D:\auto_agent\img2.png), a 1254²
+     headset-and-tablet character on a cream ground. Centre-cropped to 16:11
+     (448x308, object-fit:cover) rather than letterboxed — the mascot sits in the
+     middle band, so the crop only eats the surplus top/bottom cream and leaves
+     the whole figure uncut. */
   { no: "04", name: "AX-agent", desc: "Claude Code 서브에이전트 77종 + 훅 자동화", role: "Team Lead", year: "2026", stack: ["Anthropic API"], href: "https://github.com/rhl0509/claude-agents", thumb: "/thumbs/ax-agent.webp" },
   /* real (D:\stock_tracker) — FastAPI + React client + MySQL. The 머신러닝 half
      is XGBoost_v2/, and the three nouns in desc are what it actually pulls:
