@@ -79,16 +79,22 @@ export const PROJECTS: Project[] = [
      it is letterboxed onto white with a 10% margin, not centre-cropped — cropping
      a wordmark to 16:11 eats the A and the trailing E. */
   { no: "05", name: "Road A Eye", desc: "고속도로 CCTV 기반 위험차량 감지·관제", role: "Team Lead", year: "2026", stack: ["Next.js", "FastAPI", "JWT", "DB 이중화", "ITS API"], href: "https://github.com/RoadAeye/Road_A_Eye/tree/develop", thumb: "/thumbs/road-a-eye.webp" },
-  /* real (D:\auto_agent). 62종 is counted, not quoted: 62 of the 63 top-level
-     .md files carry a `name:` frontmatter (design-agents.md is the odd one),
-     which matches the repo README's own figure.
+  /* real (D:\auto_agent). 77종 is counted, not quoted: 77 of the 82 top-level
+     .md files carry a `name:` frontmatter (the other five are the four docs —
+     README/CHANGELOG/AGENTS/CLAUDE — and design-agents.md), which matches the
+     repo README's own figure.
      KNOWN: this href 404s for visitors. rhl0509/claude-agents is private, and
      GitHub answers 404 (not 403) for private repos so their existence stays
      hidden — so the link reads as broken, not as locked. It is here by the
      owner's explicit decision, made after that was verified; do not "fix" it by
      deleting the href. Flipping the repo to public is what makes it work, and
-     the repo already reads as if it were (its README carries a git clone URL). */
-  { no: "04", name: "AX-agent", desc: "Claude Code 서브에이전트 62종 + 훅 자동화", role: "Team Lead", year: "2026", stack: ["Anthropic API"], href: "https://github.com/rhl0509/claude-agents" },
+     the repo already reads as if it were (its README carries a git clone URL).
+     thumb: the project's own AX-agent logo (D:\auto_agent\img.png), a 1254²
+     mascot+wordmark on a cream ground. Centre-cropped to 16:11 rather than
+     letterboxed — the mark's content sits in the middle 708px of height, so the
+     crop only eats the surplus top/bottom cream and leaves the whole mark and
+     the "AX-AGENT" wordmark uncut. */
+  { no: "04", name: "AX-agent", desc: "Claude Code 서브에이전트 77종 + 훅 자동화", role: "Team Lead", year: "2026", stack: ["Anthropic API"], href: "https://github.com/rhl0509/claude-agents", thumb: "/thumbs/ax-agent.webp" },
   /* real (D:\stock_tracker) — FastAPI + React client + MySQL. The 머신러닝 half
      is XGBoost_v2/, and the three nouns in desc are what it actually pulls:
      시세 = pykrx adjusted OHLCV (collect_universe/collect_v2), 수급 =
