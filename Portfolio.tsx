@@ -68,8 +68,8 @@ export interface Project {
 export const PROJECTS: Project[] = [
   /* real — RoadAeye/Road_A_Eye, a team project (AI-X final). Everything in
      stack is from the backend README: FastAPI 0.115 + SQLAlchemy 2.0 async +
-     aiomysql, JWT (pyjwt) + bcrypt, a Next.js front on :3000, an AI server on
-     :8001; db/schema holds ai_db / board_db / chat_db / member_db.
+     aiomysql, JWT (pyjwt) + bcrypt, a Next.js front on :3060, an AI server on
+     :8061; db/schema holds ai_db / board_db / chat_db / member_db.
      KNOWN: the repo is private, so this 404s for anonymous visitors (as with 04).
      The URL points at /tree/develop on purpose: `main` holds only an "Initial
      commit", while the actual app lives on `develop` (apps/, db/, docs/; 12
