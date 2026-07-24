@@ -89,7 +89,7 @@ export const PROJECTS: Project[] = [
      owner's explicit decision, made after that was verified; do not "fix" it by
      deleting the href. Flipping the repo to public is what makes it work, and
      the repo already reads as if it were (its README carries a git clone URL).
-     thumb: the project's own AX-agent mascot (D:\auto_agent\img2.png), a 1254²
+     thumb: the project's own AX-agent mascot (D:\auto_agent\img3.png), a 1254²
      headset-and-tablet character on a cream ground. Centre-cropped to 16:11
      (448x308, object-fit:cover) rather than letterboxed — the mascot sits in the
      middle band, so the crop only eats the surplus top/bottom cream and leaves
