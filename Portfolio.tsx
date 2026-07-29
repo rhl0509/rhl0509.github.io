@@ -76,14 +76,11 @@ export const PROJECTS: Project[] = [
      No href: rhl0509/erp is private, so it would 404 for visitors the way 05 and
      04 do. Those two carry the link by the owner's explicit decision; this one
      follows 03/02 instead and stays unlinked until the repo is public.
-     thumb: docs/screenshots/02-dashboard.png, the console's own dashboard shot
-     (1416x848). Cropped to the top-left 660x454 — 16:11, so nothing is squeezed
-     — and scaled to 448x308. The crop is tight on purpose: the page is mostly
-     white, and at 64px a wider frame turned to grey mush. Holding the black nav
-     bar and the first stat card is what keeps the cell legible. Note the shot dates
-     from the initial commits: its nav shows 대시보드·거래처·품목·회원 only, while
-     the app has since grown 재고·발주·수주·회계·GL. Re-shoot it and regenerate. */
-  { no: "06", name: "ERP Console", desc: "재고·발주/수주부터 복식부기 총계정원장까지", role: "Portfolio", year: "2026", stack: ["Next.js", "FastAPI", "MySQL"], thumb: "/thumbs/erp.webp" },
+     No thumb, by the owner's call — the row takes the inert frame, as 03 does.
+     The console's own dashboard shot (docs/screenshots/02-dashboard.png) is the
+     obvious source if that is ever revisited, but it needs a tight crop: the page
+     is mostly white and a wide frame turns to grey mush at 64px. */
+  { no: "06", name: "ERP Console", desc: "재고·발주/수주부터 복식부기 총계정원장까지", role: "Portfolio", year: "2026", stack: ["Next.js", "FastAPI", "MySQL"] },
   /* real — RoadAeye/Road_A_Eye, a team project (AI-X final). Everything in
      stack is from the backend README: FastAPI 0.115 + SQLAlchemy 2.0 async +
      aiomysql, JWT (pyjwt) + bcrypt, a Next.js front on :3060, an AI server on
