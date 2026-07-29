@@ -63,10 +63,27 @@ export interface Project {
    The two hrefs both 404 for visitors — see each row's note. Every backing repo
    is private except crack's, and that one is a stale April snapshot with no
    README, so it is not linked either.
-   `no` is display text, not an index, and it is assigned in the order entries
-   were added, not by row position — so the list reads 05…01 then 06 at the
-   bottom, and adding one never renumbers the rest. */
+   `no` is display text, not an index — deleting from the top keeps 06…01
+   contiguous, so nothing renumbers. Delete from the middle and it will. */
 export const PROJECTS: Project[] = [
+  /* real (D:\erp) — FastAPI + SQLAlchemy backend with a Next.js 16 admin console
+     in frontend/ (React 19, TanStack Query, openapi-typescript against the
+     backend's own OpenAPI). MySQL in anger, SQLite for local runs. The stack
+     cell names the three that headline it; the part worth the row is the GL —
+     app/gl.py posts double-entry journals off every document and derives
+     분개장·계정별원장·시산표 from them, which is why desc ends there rather than at
+     발주/수주. Year from git: first commit 2026-06-24, still moving 2026-07.
+     No href: rhl0509/erp is private, so it would 404 for visitors the way 05 and
+     04 do. Those two carry the link by the owner's explicit decision; this one
+     follows 03/02 instead and stays unlinked until the repo is public.
+     thumb: docs/screenshots/02-dashboard.png, the console's own dashboard shot
+     (1416x848). Cropped to the top-left 660x454 — 16:11, so nothing is squeezed
+     — and scaled to 448x308. The crop is tight on purpose: the page is mostly
+     white, and at 64px a wider frame turned to grey mush. Holding the black nav
+     bar and the first stat card is what keeps the cell legible. Note the shot dates
+     from the initial commits: its nav shows 대시보드·거래처·품목·회원 only, while
+     the app has since grown 재고·발주·수주·회계·GL. Re-shoot it and regenerate. */
+  { no: "06", name: "ERP Console", desc: "재고·발주/수주부터 복식부기 총계정원장까지", role: "Portfolio", year: "2026", stack: ["Next.js", "FastAPI", "MySQL"], thumb: "/thumbs/erp.webp" },
   /* real — RoadAeye/Road_A_Eye, a team project (AI-X final). Everything in
      stack is from the backend README: FastAPI 0.115 + SQLAlchemy 2.0 async +
      aiomysql, JWT (pyjwt) + bcrypt, a Next.js front on :3060, an AI server on
@@ -128,24 +145,6 @@ export const PROJECTS: Project[] = [
      than something drawn for this page. The crop keeps the wordmark and the bolt
      whole; the diagonal runs corner to corner either way, so it still full-bleeds. */
   { no: "01", name: "crack", desc: "도로 균열·포트홀·싱크홀 탐지", role: "Team member", year: "2026", stack: ["Flask", "HTML", "SAM2"], thumb: "/thumbs/crack.webp" },
-  /* real (D:\erp) — FastAPI + SQLAlchemy backend with a Next.js 16 admin console
-     in frontend/ (React 19, TanStack Query, openapi-typescript against the
-     backend's own OpenAPI). MySQL in anger, SQLite for local runs. The stack
-     cell names the three that headline it; the part worth the row is the GL —
-     app/gl.py posts double-entry journals off every document and derives
-     분개장·계정별원장·시산표 from them, which is why desc ends there rather than at
-     발주/수주. Year from git: first commit 2026-06-24, still moving 2026-07.
-     No href: rhl0509/erp is private, so it would 404 for visitors the way 05 and
-     04 do. Those two carry the link by the owner's explicit decision; this one
-     follows 03/02 instead and stays unlinked until the repo is public.
-     thumb: docs/screenshots/02-dashboard.png, the console's own dashboard shot
-     (1416x848). Cropped to the top-left 660x454 — 16:11, so nothing is squeezed
-     — and scaled to 448x308. The crop is tight on purpose: the page is mostly
-     white, and at 64px a wider frame turned to grey mush. Holding the black nav
-     bar and the first stat card is what keeps the cell legible. Note the shot dates
-     from the initial commits: its nav shows 대시보드·거래처·품목·회원 only, while
-     the app has since grown 재고·발주·수주·회계·GL. Re-shoot it and regenerate. */
-  { no: "06", name: "ERP Console", desc: "재고·발주/수주부터 복식부기 총계정원장까지", role: "Portfolio", year: "2026", stack: ["Next.js", "FastAPI", "MySQL"], thumb: "/thumbs/erp.webp" },
 ];
 
 /** Arrow, angled up-right rather than straight: ↗ is the established "leaves
