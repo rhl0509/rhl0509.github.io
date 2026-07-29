@@ -63,9 +63,28 @@ export interface Project {
    The two hrefs both 404 for visitors — see each row's note. Every backing repo
    is private except crack's, and that one is a stale April snapshot with no
    README, so it is not linked either.
-   `no` is display text, not an index — deleting from the top keeps 06…01
-   contiguous, so nothing renumbers. Delete from the middle and it will. */
+   `no` is display text, not an index — deleting from the top keeps 07…01
+   contiguous, so nothing renumbers. Delete from the middle and it will.
+   Adding takes the next number and goes on top; it never pushes the existing
+   ones down a slot. */
 export const PROJECTS: Project[] = [
+  /* real (D:\local_LLM\pretrain) — a language model built from the bottom: own
+     BPE 32k tokenizer, own architecture, own training loop and sampler, 1,281
+     lines across seven p_*.py files, inheriting zero external checkpoints. That
+     last part is the whole point of the row, and it is what separates this from
+     the sibling track (D:\local_LLM\finetune), which puts QLoRA adapters on
+     Qwen2.5-Coder and serves them through Ollama. Same word "training", different
+     layer — do not merge the two into one row.
+     desc claims only what has already finished, on purpose. Settled as of
+     2026-07-29: the tokenizer (Korean compression +50.4%) and a 109.53M model
+     trained 6,000 steps in 17.83h to val 2.7365, off a 13.4GB corpus / 3.12B
+     token cache. The headline 556M run is STILL TRAINING — 5,110 of 12,200 steps
+     that day, finishing early August — so nothing here names a parameter count or
+     calls the model done. When that run clears and SFT+eval land, this is the row
+     to rewrite with the real numbers; PRETRAIN_PIPELINE.md §5 is the source.
+     No href: the folder has no git repo, and the doc keeps outputs local until
+     the corpus licences are sorted, so there is nothing to link yet. */
+  { no: "07", name: "from-scratch LLM", desc: "자체 토크나이저부터 사전학습까지 밑바닥 구현", role: "Portfolio", year: "2026", stack: ["PyTorch", "BPE", "사전학습"] },
   /* real (D:\erp) — FastAPI + SQLAlchemy backend with a Next.js 16 admin console
      in frontend/ (React 19, TanStack Query, openapi-typescript against the
      backend's own OpenAPI). MySQL in anger, SQLite for local runs. The stack
