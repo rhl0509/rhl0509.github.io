@@ -60,14 +60,11 @@ export interface Project {
    that was only ever a spec) is gone, so the list no longer claims anything that
    cannot be produced on request. Keep it that way: an entry earns its slot by
    existing, not by rounding the list out.
-   Link status as of 2026-08-21 — every row but 05 carries a live href. That
-   day 07 (seed-llm) and 01 (sinkhole-detection) were published fresh, and
-   claude-agents, erp, stock_git and expense_tracker were flipped from private
-   to public, so 04/06/03/02 resolve for anonymous visitors too — all six
-   verified with an anonymous request, not assumed from the flip.
-   05 (RoadAeye/Road_A_Eye) still 404s: it is a team org repo, so flipping it is
-   not the owner's call. It is here by the owner's explicit decision — do not
-   "fix" it by deleting the href. See each row's note.
+   Link status as of 2026-08-21 — all seven rows carry a live href, each one
+   verified with an anonymous request rather than assumed. That day 07
+   (seed-llm), 01 (sinkhole-detection) and 05 (road-a-eye) were published fresh,
+   and claude-agents, erp, stock_git and expense_tracker were flipped from
+   private to public. See each row's note.
    `no` is display text, not an index — deleting from the top keeps 07…01
    contiguous, so nothing renumbers. Delete from the middle and it will.
    Adding takes the next number and goes on top; it never pushes the existing
@@ -120,15 +117,18 @@ export const PROJECTS: Project[] = [
      stack is from the backend README: FastAPI 0.115 + SQLAlchemy 2.0 async +
      aiomysql, JWT (pyjwt) + bcrypt, a Next.js front on :3060, an AI server on
      :8061; db/schema holds ai_db / board_db / chat_db / member_db.
-     KNOWN: the repo is private, so this 404s for anonymous visitors (as with 04).
-     The URL points at /tree/develop on purpose: `main` holds only an "Initial
-     commit", while the actual app lives on `develop` (apps/, db/, docs/; 12
-     commits) — so a reader who does have access lands on the real work, not an
-     empty repo. Making the repo public is what fixes the visitor 404.
+     2026-08-21: href moved from RoadAeye/Road_A_Eye to rhl0509/road-a-eye. The
+     team org repo stays private and is NOT the thing to link — its history
+     carries the pre-scrub commits (4-server SSH configs, known_hosts, personal
+     emails), so flipping it to public would expose all of that even though the
+     current tree is clean. The linked repo is a history-free snapshot of that
+     develop branch with docs/ssh, the presentation deck, the demo video and
+     every teammate name and photo removed (131MB -> 15MB, 288 files).
+     Do not "fix" this by pointing it back at the org repo.
      thumb: the team's A EYE wordmark. It is 293x162 on an opaque white ground, so
      it is letterboxed onto white with a 10% margin, not centre-cropped — cropping
      a wordmark to 16:11 eats the A and the trailing E. */
-  { no: "05", name: "Road A Eye", desc: "고속도로 CCTV 기반 위험차량 감지·관제", role: "Team Lead", year: "2026", stack: ["Next.js", "FastAPI", "JWT", "DB 이중화", "ITS API"], href: "https://github.com/RoadAeye/Road_A_Eye/tree/develop", thumb: "/thumbs/road-a-eye.webp" },
+  { no: "05", name: "Road A Eye", desc: "고속도로 CCTV 기반 위험차량 감지·관제", role: "Team Lead", year: "2026", stack: ["Next.js", "FastAPI", "JWT", "DB 이중화", "ITS API"], href: "https://github.com/rhl0509/road-a-eye", thumb: "/thumbs/road-a-eye.webp" },
   /* real (D:\auto_agent). 77종 is counted, not quoted: 77 of the 82 top-level
      .md files carry a `name:` frontmatter (the other five are the four docs —
      README/CHANGELOG/AGENTS/CLAUDE — and design-agents.md), which matches the
