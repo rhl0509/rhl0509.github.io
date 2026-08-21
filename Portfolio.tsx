@@ -60,9 +60,14 @@ export interface Project {
    that was only ever a spec) is gone, so the list no longer claims anything that
    cannot be produced on request. Keep it that way: an entry earns its slot by
    existing, not by rounding the list out.
-   The two hrefs both 404 for visitors — see each row's note. Every backing repo
-   is private except crack's, and that one is a stale April snapshot with no
-   README, so it is not linked either.
+   Link status as of 2026-08-21 — four rows carry an href, two of them live:
+   07 (rhl0509/seed-llm) and 01 (rhl0509/sinkhole-detection) were published that
+   day and resolve for anonymous visitors. 05 (RoadAeye/Road_A_Eye) and 04
+   (rhl0509/claude-agents) still 404: both are private, and both are here by the
+   owner's explicit decision — do not "fix" them by deleting the href.
+   06/03/02 stay unlinked pending the repos going public; when rhl0509/erp,
+   rhl0509/stock_git and rhl0509/expense_tracker flip, each row takes one href
+   field and nothing else changes. See each row's note.
    `no` is display text, not an index — deleting from the top keeps 07…01
    contiguous, so nothing renumbers. Delete from the middle and it will.
    Adding takes the next number and goes on top; it never pushes the existing
@@ -87,9 +92,14 @@ export const PROJECTS: Project[] = [
      that day, finishing early August — so nothing here names a parameter count or
      calls the model done. When that run clears and SFT+eval land, this is the row
      to rewrite with the real numbers; PRETRAIN_PIPELINE.md §5 is the source.
-     No href: the folder has no git repo, and the doc keeps outputs local until
-     the corpus licences are sorted, so there is nothing to link yet. */
-  { no: "07", name: "Seed_LLM", desc: "자체 토크나이저부터 사전학습까지 밑바닥 구현", role: "Portfolio", year: "2026", stack: ["PyTorch", "BPE", "사전학습"] },
+     2026-08-21: both blockers cleared. The 556M run finished 2026-08-05
+     (12,200 steps / 6.00B tokens / 256.84h, val 10.37 -> 2.2925) and SFT+eval
+     landed 08-06, so desc now names the parameter count. Licences were settled
+     in PRETRAIN_PIPELINE.md 2.3 — the corpus is licence-filtered public data
+     (codeparrot allowlist, 210k files dropped), so the code, logs and tokenizer
+     are published as rhl0509/seed-llm; the 89.8GB corpus and 41.3GB of
+     checkpoints stay local on size, not on licence. */
+  { no: "07", name: "Seed_LLM", desc: "자체 토크나이저부터 556M 사전학습까지 밑바닥 구현", role: "Portfolio", year: "2026", stack: ["PyTorch", "BPE", "사전학습"], href: "https://github.com/rhl0509/seed-llm" },
   /* real (D:\erp) — FastAPI + SQLAlchemy backend with a Next.js 16 admin console
      in frontend/ (React 19, TanStack Query, openapi-typescript against the
      backend's own OpenAPI). MySQL in anger, SQLite for local runs. The stack
@@ -157,15 +167,19 @@ export const PROJECTS: Project[] = [
   { no: "02", name: "AI 가계부", desc: "AI를 활용한 개인·가구 공유 가계부", role: "Portfolio", year: "2026", stack: ["Full-stack", "AI API"], thumb: "/thumbs/expense-tracker.webp" },
   /* real (D:\crack), team project — MBC 2026 대보정보통신 선도교육 2조.
      desc/stack describe the local state: the 싱크홀·SAM2 half is not in the
-     public repo, which was last pushed 2026-04-09. href deliberately omitted —
-     A-Eye-2026/crack is public, but it has no README and the contributor graph
-     reads rhl0509 2 of 25 commits. Linking it is the owner's call, not a
-     default.
+     public repo, which was last pushed 2026-04-09.
+     href points at rhl0509/sinkhole-detection, NOT A-Eye-2026/crack. The team
+     repo is public but has no README and the contributor graph reads rhl0509
+     2 of 25 commits, so it undersells rather than evidences. The linked repo is
+     the owner's own half — the SAM2 + FCOS detection head, its six ablation
+     logs and the failure-type analysis — extracted 2026-08-21 with a README
+     that carries the numbers. The row still reads "Team member" because the
+     Flask app this shipped into is the team's; only the model is solo.
      thumb: the app's own PWA icon (crack/static/icons/icon-512.png), centre-cropped
      to 16:11 — a mark, not a screenshot, but it is the project's real asset rather
      than something drawn for this page. The crop keeps the wordmark and the bolt
      whole; the diagonal runs corner to corner either way, so it still full-bleeds. */
-  { no: "01", name: "crack", desc: "도로 균열·포트홀·싱크홀 탐지", role: "Team member", year: "2026", stack: ["Flask", "HTML", "SAM2"], thumb: "/thumbs/crack.webp" },
+  { no: "01", name: "crack", desc: "도로 균열·포트홀·싱크홀 탐지", role: "Team member", year: "2026", stack: ["Flask", "HTML", "SAM2"], href: "https://github.com/rhl0509/sinkhole-detection", thumb: "/thumbs/crack.webp" },
 ];
 
 /** Arrow, angled up-right rather than straight: ↗ is the established "leaves
