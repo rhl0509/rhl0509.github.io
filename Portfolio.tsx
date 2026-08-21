@@ -60,14 +60,14 @@ export interface Project {
    that was only ever a spec) is gone, so the list no longer claims anything that
    cannot be produced on request. Keep it that way: an entry earns its slot by
    existing, not by rounding the list out.
-   Link status as of 2026-08-21 — four rows carry an href, two of them live:
-   07 (rhl0509/seed-llm) and 01 (rhl0509/sinkhole-detection) were published that
-   day and resolve for anonymous visitors. 05 (RoadAeye/Road_A_Eye) and 04
-   (rhl0509/claude-agents) still 404: both are private, and both are here by the
-   owner's explicit decision — do not "fix" them by deleting the href.
-   06/03/02 stay unlinked pending the repos going public; when rhl0509/erp,
-   rhl0509/stock_git and rhl0509/expense_tracker flip, each row takes one href
-   field and nothing else changes. See each row's note.
+   Link status as of 2026-08-21 — every row but 05 carries a live href. That
+   day 07 (seed-llm) and 01 (sinkhole-detection) were published fresh, and
+   claude-agents, erp, stock_git and expense_tracker were flipped from private
+   to public, so 04/06/03/02 resolve for anonymous visitors too — all six
+   verified with an anonymous request, not assumed from the flip.
+   05 (RoadAeye/Road_A_Eye) still 404s: it is a team org repo, so flipping it is
+   not the owner's call. It is here by the owner's explicit decision — do not
+   "fix" it by deleting the href. See each row's note.
    `no` is display text, not an index — deleting from the top keeps 07…01
    contiguous, so nothing renumbers. Delete from the middle and it will.
    Adding takes the next number and goes on top; it never pushes the existing
@@ -107,14 +107,15 @@ export const PROJECTS: Project[] = [
      app/gl.py posts double-entry journals off every document and derives
      분개장·계정별원장·시산표 from them, which is why desc ends there rather than at
      발주/수주. Year from git: first commit 2026-06-24, still moving 2026-07.
-     No href: rhl0509/erp is private, so it would 404 for visitors the way 05 and
-     04 do. Those two carry the link by the owner's explicit decision; this one
-     follows 03/02 instead and stays unlinked until the repo is public.
+     2026-08-21: rhl0509/erp flipped to public, so the href it was waiting on is
+     live. The README now opens with a measured summary (100 endpoints, 31
+     tables, 16 migrations, 130 test functions) — the numbers a visitor arriving
+     from this row would otherwise have to dig for.
      No thumb, by the owner's call — the row takes the inert frame, as 03 does.
      The console's own dashboard shot (docs/screenshots/02-dashboard.png) is the
      obvious source if that is ever revisited, but it needs a tight crop: the page
      is mostly white and a wide frame turns to grey mush at 64px. */
-  { no: "06", name: "ERP Console", desc: "재고·발주/수주부터 복식부기 총계정원장까지", role: "Portfolio", year: "2026", stack: ["Next.js", "FastAPI", "MySQL"] },
+  { no: "06", name: "ERP Console", desc: "재고·발주/수주부터 복식부기 총계정원장까지", role: "Portfolio", year: "2026", stack: ["Next.js", "FastAPI", "MySQL"], href: "https://github.com/rhl0509/erp" },
   /* real — RoadAeye/Road_A_Eye, a team project (AI-X final). Everything in
      stack is from the backend README: FastAPI 0.115 + SQLAlchemy 2.0 async +
      aiomysql, JWT (pyjwt) + bcrypt, a Next.js front on :3060, an AI server on
@@ -150,21 +151,26 @@ export const PROJECTS: Project[] = [
      flow_history (collect_flow), 공시 = DART (collect_disclosure/dart_client).
      Those feed feature_v2 → train_v2 → predict_v2 → backtest_v2 →
      daily_recommend. Year from git: first commits 2026-06.
-     No href: D:\stock_git is the deploy repo and it is private. */
-  { no: "03", name: "AI Stock", desc: "시세·수급·공시 수집부터 예측·백테스트까지", role: "Portfolio", year: "2026", stack: ["Full-stack", "머신러닝"] },
+     href: rhl0509/stock_git, the deploy repo, public since 2026-08-21. Note the
+     split — the ML work described above lives in D:\stock_tracker, which has no
+     remote; the linked repo is the deployed dashboard. desc covers both because
+     the pipeline feeds the dashboard, but a reader following the link lands on
+     the deploy side. */
+  { no: "03", name: "AI Stock", desc: "시세·수급·공시 수집부터 예측·백테스트까지", role: "Portfolio", year: "2026", stack: ["Full-stack", "머신러닝"], href: "https://github.com/rhl0509/stock_git" },
   /* real (D:\expense_tracker) — actually Next.js 16 + FastAPI + MySQL, recorded
      here because the Stack cell now carries "Full-stack" instead of the tech
      list (owner's call). "AI API" is routes/expense_ai.py, which instantiates
-     an Anthropic client. No href: the backend repo is private and the Next.js
-     frontend its README points to (rhl0509/expense_frontend) does not exist on
-     GitHub.
+     an Anthropic client. href: rhl0509/expense_tracker, public since 2026-08-21.
+     It is a monorepo — the Next.js front lives in frontend/, so the row needs
+     only this one link. (The README used to point at rhl0509/expense_frontend,
+     which does not exist on GitHub; do not link that.)
      thumb: the app icon from expense_tracker. The source is a 1024² PNG whose
      mark occupies only the middle 723×731 — the rest is transparent, so it is
      trimmed to that content box first; without the trim the empty alpha border
      reads as padding and the icon renders tiny at 64px. From there it is
      stretched to 16:11 rather than letterboxed — filling the cell edge to edge
      is the owner's call, taken knowing the square art widens by ~47%. */
-  { no: "02", name: "AI 가계부", desc: "AI를 활용한 개인·가구 공유 가계부", role: "Portfolio", year: "2026", stack: ["Full-stack", "AI API"], thumb: "/thumbs/expense-tracker.webp" },
+  { no: "02", name: "AI 가계부", desc: "AI를 활용한 개인·가구 공유 가계부", role: "Portfolio", year: "2026", stack: ["Full-stack", "AI API"], href: "https://github.com/rhl0509/expense_tracker", thumb: "/thumbs/expense-tracker.webp" },
   /* real (D:\crack), team project — MBC 2026 대보정보통신 선도교육 2조.
      desc/stack describe the local state: the 싱크홀·SAM2 half is not in the
      public repo, which was last pushed 2026-04-09.
